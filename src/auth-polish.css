@@ -1,0 +1,316 @@
+
+/* =========================================
+   CHATLY AUTHENTICATION UI POLISH
+   ========================================= */
+
+.auth-card-modern .auth-password-field {
+  position: relative;
+  display: flex;
+  align-items: center;
+  width: 100%;
+}
+
+.auth-card-modern .auth-password-field > input {
+  width: 100%;
+  min-width: 0;
+  padding-right: 54px;
+}
+
+.auth-card-modern .auth-password-toggle {
+  position: absolute;
+  z-index: 1;
+  right: 7px;
+  top: 50%;
+  transform: translateY(-50%);
+
+  display: inline-grid;
+  place-items: center;
+
+  width: 40px;
+  height: 40px;
+  min-width: 40px;
+  min-height: 40px;
+
+  padding: 0;
+  border: none;
+  border-radius: 12px;
+
+  color: #77738d;
+  background: transparent;
+  box-shadow: none;
+
+  cursor: pointer;
+
+  transition:
+    color .2s ease,
+    background .2s ease,
+    transform .2s ease;
+}
+
+.auth-card-modern .auth-password-toggle:hover {
+  color: #6253df;
+  background: #f0edff;
+}
+
+.auth-card-modern .auth-password-toggle:active {
+  transform: translateY(-50%) scale(.94);
+}
+
+/* FORGOT PASSWORD */
+
+.auth-card-modern .auth-forgot-link {
+  display: inline-flex;
+  align-self: flex-end;
+
+  width: auto;
+  min-height: 36px;
+
+  margin: -2px 0 5px auto;
+  padding: 5px 2px;
+
+  border: none;
+  border-radius: 7px;
+
+  color: #6253df;
+  background: transparent;
+  box-shadow: none;
+
+  font: inherit;
+  font-size: 14px;
+  font-weight: 650;
+
+  cursor: pointer;
+
+  transition: color .2s ease;
+}
+
+.auth-card-modern .auth-forgot-link:hover:not(:disabled) {
+  color: #4938c7;
+  text-decoration: underline;
+  text-underline-offset: 3px;
+}
+
+.auth-card-modern .auth-forgot-link:disabled {
+  opacity: .55;
+  cursor: wait;
+}
+
+/* PRIMARY BUTTON */
+
+.auth-card-modern .auth-traditional-form > .primary-button,
+.auth-card-modern > .primary-button {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 10px;
+
+  width: 100%;
+  min-height: 54px;
+
+  padding: 13px 20px;
+
+  border: 1px solid transparent;
+  border-radius: 15px;
+
+  color: #fff;
+
+  background: linear-gradient(
+    135deg,
+    #7061ef 0%,
+    #5c4be0 100%
+  );
+
+  box-shadow: 0 8px 20px rgba(96, 79, 224, .2);
+
+  font-size: 15px;
+  font-weight: 700;
+
+  cursor: pointer;
+
+  transition:
+    transform .2s ease,
+    box-shadow .2s ease,
+    filter .2s ease;
+}
+
+.auth-card-modern .auth-traditional-form > .primary-button:hover:not(:disabled),
+.auth-card-modern > .primary-button:hover:not(:disabled) {
+  filter: brightness(1.045);
+  box-shadow: 0 10px 24px rgba(96, 79, 224, .27);
+  transform: translateY(-1px);
+}
+
+.auth-card-modern .primary-button:active:not(:disabled) {
+  transform: scale(.99);
+}
+
+.auth-card-modern .primary-button:disabled {
+  opacity: .72;
+  cursor: wait;
+  box-shadow: none;
+}
+
+.auth-button-arrow {
+  flex: 0 0 auto;
+  transition: transform .2s ease;
+}
+
+.auth-traditional-form > .primary-button:hover .auth-button-arrow {
+  transform: translateX(3px);
+}
+
+/* LOADING SPINNER */
+
+.auth-button-spinner {
+  flex: 0 0 auto;
+  animation: auth-spin .8s linear infinite;
+}
+
+@keyframes auth-spin {
+  to {
+    transform: rotate(360deg);
+  }
+}
+
+/* GOOGLE SIGN IN */
+
+.auth-card-modern .oauth-button {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 12px;
+
+  min-height: 54px;
+
+  border: 1px solid #e5e3ed;
+  border-radius: 15px;
+
+  background: #fff;
+  color: #292735;
+
+  font-weight: 650;
+
+  transition: all .2s ease;
+}
+
+.auth-card-modern .oauth-button:hover:not(:disabled) {
+  border-color: #c9c2fb;
+  background: #fbfaff;
+  box-shadow: 0 5px 16px rgba(52, 42, 110, .07);
+  transform: translateY(-1px);
+}
+
+/* GOOGLE LOGO */
+
+.auth-google-mark {
+  display: inline-grid;
+  place-items: center;
+
+  width: 23px;
+  height: 23px;
+
+  border-radius: 50%;
+
+  color: #4285f4;
+
+  background: conic-gradient(
+    #4285f4 0 25%,
+    #34a853 25% 50%,
+    #fbbc05 50% 75%,
+    #ea4335 75% 100%
+  );
+
+  font-family: Arial, sans-serif;
+  font-size: 0;
+  font-weight: 800;
+
+  position: relative;
+}
+
+.auth-google-mark::after {
+  content: "G";
+
+  position: absolute;
+  inset: 2px;
+
+  display: grid;
+  place-items: center;
+
+  border-radius: 50%;
+
+  background: #fff;
+  color: #4285f4;
+
+  font-size: 14px;
+}
+
+/* ACCOUNT SWITCH */
+
+.auth-card-modern .auth-mode-switch {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-wrap: wrap;
+  gap: 8px;
+}
+
+.auth-card-modern .auth-create-account-link {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+
+  min-height: 42px;
+
+  padding: 8px 15px;
+
+  border: 1px solid #d8d2ff;
+  border-radius: 11px;
+
+  color: #5e4bdc;
+  background: #f8f6ff;
+
+  font-weight: 650;
+  text-decoration: none;
+
+  cursor: pointer;
+
+  transition: all .2s ease;
+}
+
+.auth-card-modern .auth-create-account-link:hover {
+  border-color: #b9afff;
+  background: #efecff;
+  transform: translateY(-1px);
+}
+
+/* ACCESSIBILITY */
+
+.auth-card-modern :is(button, input):focus-visible {
+  outline: 2px solid #6557e8;
+  outline-offset: 3px;
+}
+
+/* MOBILE */
+
+@media (max-width: 480px) {
+  .auth-card-modern .auth-traditional-form > .primary-button,
+  .auth-card-modern > .primary-button,
+  .auth-card-modern .oauth-button {
+    min-height: 52px;
+  }
+
+  .auth-card-modern .auth-forgot-link {
+    font-size: 13px;
+  }
+}
+
+/* REDUCED MOTION */
+
+@media (prefers-reduced-motion: reduce) {
+  .auth-card-modern *,
+  .auth-card-modern *::before,
+  .auth-card-modern *::after {
+    animation: none !important;
+    transition: none !important;
+  }
+}
