@@ -293,3 +293,11 @@
     transition: none;
   }
 }
+
+/* Reserve the mobile navigation and safe-area region below the conversation. */
+@media (max-width: 767px) {
+  .app-shell .chat-layout {
+    height: calc(100dvh - 126px - env(safe-area-inset-bottom, 0px));
+    min-height: 280px;
+  }
+}
