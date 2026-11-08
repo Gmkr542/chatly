@@ -1,0 +1,90 @@
+/* Chatly 2026 responsive application shell
+   Uses the existing tab state and design-token layer; presentation only. */
+.app-shell {
+  display: grid;
+  grid-template-columns: 240px minmax(0, 600px) minmax(0, 1fr);
+  align-items: start;
+  min-height: 100dvh;
+  width: 100%;
+}
+.app-desktop-sidebar {
+  grid-column: 1; grid-row: 1; position: sticky; top: 0; display: flex; flex-direction: column;
+  gap: var(--space-6); width: 240px; height: 100dvh; min-height: 480px;
+  padding: var(--space-6) var(--space-4); background: var(--bg-surface);
+  border-right: 1px solid var(--border-subtle); color: var(--text-primary); z-index: 20;
+}
+.app-sidebar-brand {
+  padding: var(--space-2) var(--space-3); color: var(--brand-accent);
+  font-family: var(--font-sans); font-size: 1.75rem; font-style: italic;
+  font-weight: var(--weight-bold); letter-spacing: -0.06em; line-height: 1.2;
+}
+.app-desktop-nav { display: flex; flex-direction: column; gap: var(--space-1); width: 100%; }
+.app-nav-item {
+  display: flex; align-items: center; gap: var(--space-3); width: 100%; min-width: 0; min-height: 48px;
+  padding: var(--space-2) var(--space-3); border: 0; border-radius: var(--radius-lg);
+  background: transparent; color: var(--text-secondary);
+  font: var(--weight-medium) var(--text-sm) / var(--lh-sm) var(--font-sans); text-align: left;
+  transition: background-color 180ms ease, color 180ms ease, transform 180ms ease;
+}
+.app-nav-item:hover { background: var(--bg-surface); color: var(--text-primary); }
+.app-nav-item:focus-visible, .app-mobile-nav-item:focus-visible {
+  outline: 2px solid var(--brand-accent); outline-offset: 2px;
+}
+.app-nav-item.is-active { background: var(--brand-focus); color: var(--brand-accent); font-weight: var(--weight-semibold); }
+.app-nav-item > svg, .app-mobile-nav-item > svg { flex: 0 0 20px; }
+.app-nav-count {
+  display: inline-flex; align-items: center; justify-content: center; min-width: 20px; min-height: 20px;
+  margin-left: auto; padding: 0 var(--space-1); border-radius: var(--radius-full);
+  background: var(--color-error); color: #fff; font-size: var(--text-xs); font-weight: var(--weight-semibold);
+}
+.app-sidebar-footer { margin-top: auto; padding: var(--space-3); color: var(--text-muted); font-size: var(--text-xs); line-height: var(--lh-sm); }
+.app-main-column {
+  grid-column: 2; grid-row: 1; width: 100%; max-width: 600px; min-width: 0; min-height: 100dvh;
+  background: var(--bg-primary); color: var(--text-primary);
+}
+.app-main-column > .topbar {
+  position: sticky; top: 0; z-index: var(--chatly-layer-header, 15);
+  background: var(--bg-surface); border-bottom-color: var(--border-subtle);
+}
+.app-main-column > .topbar .brand { display: none; }
+.app-main-column > .topbar .global-notification-trigger {
+  flex-basis: 44px !important; width: 44px !important; min-width: 44px !important;
+  height: 44px !important; min-height: 44px !important;
+}
+.app-main-column .global-profile-trigger { min-width: 44px; min-height: 44px; }
+.app-mobile-nav { display: none; }
+@media (max-width: 1023px) {
+  .app-shell { grid-template-columns: 224px minmax(0, 1fr); }
+  .app-desktop-sidebar { width: 224px; }
+  .app-main-column { grid-column: 2; max-width: none; }
+}
+@media (max-width: 767px) {
+  .app-shell { --chatly-mobile-nav-height: 64px; grid-template-columns: minmax(0, 1fr); }
+  .app-desktop-sidebar { display: none; }
+  .app-main-column {
+    grid-column: 1; width: 100%; max-width: none; min-height: 100dvh;
+    padding-bottom: calc(var(--chatly-mobile-nav-height) + env(safe-area-inset-bottom, 0px));
+  }
+  .app-main-column > .topbar .brand { display: flex; }
+  .app-main-column > .topbar .global-notification-trigger { margin-left: auto !important; }
+  .app-mobile-nav {
+    position: fixed; inset-inline: 0; bottom: 0; z-index: 100; display: grid;
+    grid-template-columns: repeat(6, minmax(0, 1fr)); align-items: center; gap: 0;
+    height: calc(64px + env(safe-area-inset-bottom, 0px));
+    padding: 4px max(6px, env(safe-area-inset-right, 0px)) env(safe-area-inset-bottom, 0px) max(6px, env(safe-area-inset-left, 0px));
+    background: var(--bg-surface-elevated); border-top: 1px solid var(--border-subtle);
+    box-shadow: 0 -8px 24px rgb(20 20 40 / 5%);
+  }
+  .app-mobile-nav-item {
+    display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 3px;
+    min-width: 0; min-height: 44px; height: 100%; padding: 3px 1px; border: 0;
+    border-radius: var(--radius-md); background: transparent; color: var(--text-muted);
+    font: var(--weight-medium) 10px / 1.2 var(--font-sans); white-space: nowrap;
+    transition: color 180ms ease, background-color 180ms ease;
+  }
+  .app-mobile-nav-item.is-active { color: var(--brand-accent); background: var(--brand-focus); font-weight: var(--weight-semibold); }
+  .app-mobile-nav-item > svg { flex-basis: 20px; }
+}
+@media (prefers-reduced-motion: reduce) {
+  .app-nav-item, .app-mobile-nav-item { transition: none; }
+}
