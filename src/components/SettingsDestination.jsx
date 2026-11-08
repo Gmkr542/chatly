@@ -16,8 +16,8 @@ const groups = [
   ]},
 ];
 
-function Toggle({ title, detail, checked, onChange }) {
-  return <label className="st-pref-row"><span><strong>{title}</strong><small>{detail}</small></span><input type="checkbox" checked={Boolean(checked)} onChange={e => onChange(e.target.checked)} /></label>;
+function Toggle({ title, detail, checked, onChange, disabled = false }) {
+  return <label className="st-pref-row"><span><strong>{title}</strong><small>{detail}</small></span><input type="checkbox" checked={Boolean(checked)} disabled={disabled} onChange={e => onChange(e.target.checked)} /></label>;
 }
 
 export default function SettingsDestination({ onBack = () => {}, onSubpageChange = () => {}, theme = "system", setTheme, fontSize, setFontSize, fontFamily, setFontFamily, setNotice, notice, session, accountEmail, setAccountEmail, supabase, password, setPassword, setNewPassword, chatPrefs, setChatPrefs, setEditProfileOpen }) {
