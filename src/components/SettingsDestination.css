@@ -290,10 +290,6 @@
 .st-subheader h1 { line-height:1.18; }
 .st-intro { padding-top:7px; }
 .st-intro > p { max-width:560px; }
-@media (max-width:600px) {
-  .st-search-count { margin-top:-9px; margin-bottom:10px; }
-  .st-nav-row { min-height:66px; }
-}
 @media (prefers-reduced-motion:reduce) {
   .st-nav-row { transition:none; }
 }
