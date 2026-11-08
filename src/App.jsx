@@ -1,6 +1,6 @@
 import { useEffect, useRef, useState } from "react";
 import { createPortal } from "react-dom";
-import { MessageCircle, LogOut, UserRound, Settings, X, Camera, Save, Search, Bell, Heart, MoreHorizontal, Grid3X3, Minimize2, Maximize2, ArrowLeft } from "lucide-react";
+import { MessageCircle, LogOut, UserRound, Settings, X, Camera, Save, Search, Bell, Heart, MoreHorizontal, Grid3X3, Minimize2, Maximize2, ArrowLeft, Home, Compass } from "lucide-react";
 import { supabase } from "./lib/supabase";
 import { getStoredValue, getStoredJSON, setStoredValue, setStoredJSON } from "./lib/safeStorage.js";
 import Auth from "./components/Auth.jsx";
@@ -16,6 +16,15 @@ import HistoryDestination from "./components/HistoryDestination.jsx";
 import AppNavigation from "./components/AppNavigation.jsx";
 
 const initialProfile = { display_name: "", username: "", avatar_url: "", bio: "" };
+
+const primaryNavItems = [
+  { tab: "feed", label: "Feed", icon: Home },
+  { tab: "explore", label: "Explore", icon: Compass },
+  { tab: "search", label: "Search", icon: Search },
+  { tab: "chats", label: "Chats", icon: MessageCircle },
+  { tab: "notifications", label: "Notifications", icon: Bell },
+  { tab: "profile", label: "Profile", icon: UserRound },
+];
 
 export default function App() {
   const [session, setSession] = useState(null);
@@ -352,6 +361,22 @@ export default function App() {
   if (!session) return <Auth />;
 
   return <div className={`app-shell theme-${effectiveTheme} font-${fontSize} family-${fontFamily}`} style={effectiveTheme === "dark" ? { colorScheme: "dark", background: "#141419", color: "#f4f4f7", "--app-bg": "#141419", "--surface": "#202027", "--text": "#f4f4f7", "--muted": "#a5a5b2", "--border": "#34343d" } : { colorScheme: "light", "--app-bg": "#f5f5f7", "--surface": "#ffffff", "--text": "#17171b", "--muted": "#888894", "--border": "#e4e4e9" }}>
+    <aside className="app-desktop-sidebar" aria-label="Primary navigation">
+      <div className="app-sidebar-brand">chatly</div>
+      <nav className="app-desktop-nav" aria-label="Main destinations">
+        {primaryNavItems.map(item => {
+          const selected = tab === item.tab || (item.tab === "profile" && ["public-profile", "history", "settings"].includes(tab));
+          const Icon = item.icon;
+          return <button key={item.tab} type="button" className={`app-nav-item${selected ? " is-active" : ""}`} aria-current={selected ? "page" : undefined} onClick={() => { setProfileMenuOpen(false); setTab(item.tab); }}>
+            <Icon size={20} strokeWidth={selected ? 2.2 : 1.9} aria-hidden="true" />
+            <span>{item.label}</span>
+            {item.tab === "notifications" && unreadNotifications > 0 && <span className="app-nav-count">{unreadNotifications > 99 ? "99+" : unreadNotifications}</span>}
+          </button>;
+        })}
+      </nav>
+      <div className="app-sidebar-footer">Your space, your conversations.</div>
+    </aside>
+    <main className="app-main-column">
     {tab === "feed" && <header className={`topbar${profileMenuOpen ? " has-open-account-drawer" : ""}`} >
       <div className="brand">chatly</div>
       <button type="button" className={`global-notification-trigger${unreadNotifications > 0 ? " has-unread" : ""}`} aria-label={unreadNotifications > 0 ? `Notifications, ${unreadNotifications} unread` : "Notifications"} title={unreadNotifications > 0 ? `${unreadNotifications} unread notifications` : "Notifications"} aria-haspopup="true" onClick={() => { setProfileMenuOpen(false); setTab("notifications"); }}><Bell size={19} aria-hidden="true"/>{unreadNotifications > 0 && <span className="global-notification-badge" aria-label={`${unreadNotifications} unread notifications`} aria-live="polite">{unreadNotifications > 99 ? "99+" : unreadNotifications}</span>}</button><div className="global-profile-menu"><button type="button" className="global-profile-trigger" aria-label="Open navigation menu" title="Account navigation" aria-expanded={profileMenuOpen} onClick={() => setProfileMenuOpen(v => !v)}><span className="global-profile-avatar">{profile?.avatar_url ? <img src={profile.avatar_url} alt="" onError={e => { e.currentTarget.style.display = "none"; e.currentTarget.parentElement.classList.add("avatar-image-failed"); e.currentTarget.parentElement.dataset.avatarFallback = (profile?.display_name || "C").slice(0,1).toUpperCase(); }} onLoad={e => { e.currentTarget.style.display = ""; e.currentTarget.parentElement.classList.remove("avatar-image-failed"); delete e.currentTarget.parentElement.dataset.avatarFallback; }}/> : (profile?.display_name || "C").slice(0,1).toUpperCase()}</span></button>{profileMenuOpen && createPortal(<> <button type="button" className="global-profile-backdrop" aria-label="Close navigation menu" onClick={() => setProfileMenuOpen(false)} /><nav className="global-profile-drawer" aria-label="Account navigation"><div className="global-profile-drawer-head"><span className="global-profile-avatar">{profile?.avatar_url ? <img src={profile.avatar_url} alt="" /> : (profile?.display_name || "C").slice(0,1).toUpperCase()}</span><div><strong>{profile?.display_name || "Your profile"}</strong><span>@{profile?.username || "username"}</span></div><button type="button" aria-label="Close menu" onClick={() => setProfileMenuOpen(false)}><X size={19}/></button></div><button type="button" onClick={() => { setProfileMenuOpen(false); setTab("profile"); }}><UserRound size={18}/>Profile</button><button type="button" onClick={() => { setProfileMenuOpen(false); setTab("history"); }}><Heart size={18}/>History</button><button type="button" onClick={() => { setProfileMenuOpen(false); setSettingsOpen(false); setSettingsView("home"); setSettingsSubpage(false); setTab("settings"); }}><Settings size={18}/>Settings</button><button type="button" className="global-profile-logout" onClick={async () => { setProfileMenuOpen(false); const { error } = await supabase.auth.signOut(); if (error) setNotice("Could not log out. Please try again."); }}><LogOut size={18}/>Log out</button></nav></>, document.body)}</div>
@@ -379,7 +404,9 @@ export default function App() {
       </section>
     </div>}
     {tab === "settings" && <SettingsDestination onBack={() => { setSettingsOpen(false); setSettingsView("home"); setSettingsSubpage(false); setTab("feed"); }} onSubpageChange={setSettingsSubpage} theme={theme} effectiveTheme={effectiveTheme} setTheme={setTheme} fontSize={fontSize} setFontSize={setFontSize} fontFamily={fontFamily} setFontFamily={setFontFamily} fontSizeExpanded={fontSizeExpanded} setFontSizeExpanded={setFontSizeExpanded} fontFamilyExpanded={fontFamilyExpanded} setFontFamilyExpanded={setFontFamilyExpanded} accountInfoExpanded={accountInfoExpanded} setAccountInfoExpanded={setAccountInfoExpanded} editProfileOpen={editProfileOpen} setEditProfileOpen={setEditProfileOpen} setNotice={setNotice} notice={notice} session={session} emailExpanded={emailExpanded} setEmailExpanded={setEmailExpanded} accountEmail={accountEmail} setAccountEmail={setAccountEmail} supabase={supabase} passwordExpanded={passwordExpanded} setPasswordExpanded={setPasswordExpanded} password={password} setPassword={setPassword} setNewPassword={setNewPassword} settingsExpanded={settingsExpanded} setSettingsExpanded={setSettingsExpanded} chatPrefs={chatPrefs} setChatPrefs={setChatPrefs} />}
-    {["feed", "search", "explore", "notifications", "profile"].includes(tab) && <AppNavigation activeTab={tab} unreadCount={unreadNotifications} onNavigate={nextTab => { setProfileMenuOpen(false); setChatTarget(null); setTab(nextTab); }} />}
+
+    </main>
+    <AppNavigation activeTab={tab} unreadCount={unreadNotifications} onNavigate={nextTab => { setProfileMenuOpen(false); setChatTarget(null); setTab(nextTab); }} />
     {globalVideo && <aside className={"global-youtube-player" + (globalPlayerMinimized ? " is-minimized" : "")} style={globalPlayerPosition ? { left: globalPlayerPosition.x, top: globalPlayerPosition.y, right: "auto", bottom: "auto" } : undefined} aria-label="YouTube player">
       <div className="global-youtube-player-head" onPointerDown={startPlayerDrag} title="Drag to move player"><span>{globalVideo.snippet?.title || "YouTube video"}</span>
         <div className="global-youtube-player-actions"><a href={"https://www.youtube.com/watch?v=" + encodeURIComponent(globalVideo.id?.videoId || "")} target="_blank" rel="noreferrer" aria-label="Open video on YouTube" title="Open on YouTube">↗</a>
