@@ -93,7 +93,7 @@ This inventory describes the codebase; actual production availability also depen
 
 ## Environment and secrets
 
-Only public browser configuration belongs in `VITE_*` variables. The Supabase publishable/anon key is intended for browser use when RLS is correctly configured. Never expose a Supabase service-role key, database password, or other private credential in frontend variables, Docker build arguments, or committed files.
+Only public browser configuration belongs in `VITE_*` variables. The Supabase publishable/anon key is intended for browser use when RLS is correctly configured. Never expose a service-role key in a `VITE_` variable. Never expose a Supabase service-role key, database password, or other private credential in frontend variables, Docker build arguments, or committed files.
 
 ## Render static-site deployment
 
