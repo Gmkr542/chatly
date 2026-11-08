@@ -2,7 +2,7 @@
    Imported after existing page styles so this stays a small, reversible polish layer. */
 
 :root {
-  --chatly-hit-target: 40px;
+  --chatly-hit-target: 44px;
 }
 
 /* Keyboard users get one consistent, high-contrast focus treatment. */
@@ -28,6 +28,18 @@
   .compose-modal > header button, .profile-page-head button) {
   min-width: var(--chatly-hit-target);
   min-height: var(--chatly-hit-target);
+}
+
+
+/* Consistent touch geometry for frequently used navigation and inline actions. */
+.app-shell :is(.global-notification-trigger, .global-profile-trigger, .header-notifications,
+  .profile-menu-trigger, .profile-back-button, .comment-composer button,
+  .post-actions button, .notification-refresh-button) {
+  min-height: 44px;
+}
+.app-shell :is(.global-notification-trigger, .header-notifications, .profile-menu-trigger,
+  .profile-back-button, .notification-refresh-button) {
+  min-width: 44px;
 }
 
 /* Long dialogs remain usable on short mobile screens and respect device cutouts. */
