@@ -1,10 +1,10 @@
-import { useEffect, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import { ArrowLeft, UserRound, ShieldCheck, Bell, Palette, MessageCircle, CircleHelp, Info, LogOut, Trash2, ChevronRight, Sun, Moon, Monitor, Type, KeyRound, Mail, UserCog, Check, Search, X } from "lucide-react";
 import "./SettingsDestination.css";
 import { SETTINGS_PREFERENCE_DEFAULTS, normalizeSettingsPreferences, updateSettingsPreference } from "../lib/settingsPreferences.js";
 
 const groups = [
-  { label: "YOUR ACCOUNT", items: [{ id: "account", title: "Account", detail: "Personal information and sign-in", Icon: UserRound }] },
+  { label: "YOUR ACCOUNT", items: [{ id: "profile", title: "Account Center", detail: "Profile, sign-in and account management", Icon: UserRound }] },
   { label: "PREFERENCES", items: [
     { id: "privacy", title: "Privacy & security", detail: "Read receipts and account privacy", Icon: ShieldCheck },
     { id: "notifications", title: "Notifications", detail: "Choose what you want to be notified about", Icon: Bell },
@@ -23,6 +23,14 @@ function Toggle({ title, detail, checked, onChange, disabled = false }) {
 
 export default function SettingsDestination({ onBack = () => {}, onSubpageChange = () => {}, theme = "system", setTheme, fontSize, setFontSize, fontFamily, setFontFamily, setNotice, notice, session, accountEmail, setAccountEmail, supabase, password, setPassword, setNewPassword, chatPrefs, setChatPrefs, setEditProfileOpen }) {
   const [view, setView] = useState("home");
+  const viewHistory = useRef([]);
+  const skipHistoryPush = useRef(false);
+  const navigateTo = nextView => {
+    if (!nextView || nextView === view) return;
+    viewHistory.current = [...viewHistory.current, view];
+    setView(nextView);
+    onSubpageChange(true);
+  };
   const [settingsQuery, setSettingsQuery] = useState("");
   const [serverPrivateProfile, setServerPrivateProfile] = useState(false);
   const [privacyDraft, setPrivacyDraft] = useState(false);
@@ -32,11 +40,17 @@ export default function SettingsDestination({ onBack = () => {}, onSubpageChange
   const [incomingFollowRequests, setIncomingFollowRequests] = useState([]);
   const [followRequestBusy, setFollowRequestBusy] = useState("");
   useEffect(() => {
+    if (skipHistoryPush.current) {
+      skipHistoryPush.current = false;
+      return undefined;
+    }
     if (view === "home") return undefined;
     window.history.pushState({ chatlySettingsSubpage: view }, "");
     const handlePopState = () => {
-      setView("home");
-      onSubpageChange(false);
+      const previous = viewHistory.current.pop() || "home";
+      skipHistoryPush.current = true;
+      setView(previous);
+      onSubpageChange(previous !== "home");
       setMessage("");
       setNotice("");
     };
@@ -150,17 +164,8 @@ export default function SettingsDestination({ onBack = () => {}, onSubpageChange
         <button className="st-detail-row" onClick={() => { setEditProfileOpen(true); setNotice(""); }}><UserCog/><span><strong>Edit profile</strong><small>Update your name, username, profile photo and bio</small></span><ChevronRight/></button>
       </section>
       <section className="st-card"><h2>SIGN-IN & SECURITY</h2>
-        <button className="st-detail-row" onClick={() => { setView("email"); setEmailAttempted(false); setNotice(""); onSubpageChange(true); }}><Mail/><span><strong>Email address</strong><small>{session?.user?.email || "Manage your sign-in email"}</small></span><ChevronRight/></button>
-        <button className="st-detail-row" onClick={() => { setView("password"); setPasswordConfirm(""); setPasswordVisible(false); setNotice(""); onSubpageChange(true); }}><KeyRound/><span><strong>Change password</strong><small>Update your sign-in password</small></span><ChevronRight/></button>
-      </section>
-    </>;
-    if (view === "account") return <>
-      <section className="st-card"><h2>PERSONAL INFORMATION</h2>
-        <button className="st-detail-row" onClick={() => { setEditProfileOpen(true); setNotice(""); }}><UserCog/><span><strong>Edit profile</strong><small>Display name, username, photo and bio</small></span><ChevronRight/></button>
-        <button className="st-detail-row" onClick={() => { setView("email"); setEmailAttempted(false); setNotice(""); onSubpageChange(true); }}><Mail/><span><strong>Email address</strong><small>{session?.user?.email || "Manage your sign-in email"} · {session?.user?.email_confirmed_at ? "Verified" : session?.user?.email_confirmed_at === null ? "Unverified" : "Verification status unavailable"}</small></span><ChevronRight/></button>
-      </section>
-      <section className="st-card"><h2>SECURITY & SIGN-IN</h2>
-        <button className="st-detail-row" onClick={() => { setView("password"); setPasswordConfirm(""); setPasswordVisible(false); setNotice(""); onSubpageChange(true); }}><KeyRound/><span><strong>Change password</strong><small>Choose a new password</small></span><ChevronRight/></button>
+        <button className="st-detail-row" onClick={() => { navigateTo("email"); setEmailAttempted(false); setNotice(""); onSubpageChange(true); }}><Mail/><span><strong>Email address</strong><small>{session?.user?.email || "Manage your sign-in email"} · {session?.user?.email_confirmed_at ? "Verified" : session?.user?.email_confirmed_at === null ? "Unverified" : "Verification status unavailable"}</small></span><ChevronRight/></button>
+        <button className="st-detail-row" onClick={() => { navigateTo("password"); setPasswordConfirm(""); setPasswordVisible(false); setNotice(""); onSubpageChange(true); }}><KeyRound/><span><strong>Change password</strong><small>Update your sign-in password</small></span><ChevronRight/></button>
         <button className="st-detail-row" onClick={() => setLogoutOpen(true)}><LogOut/><span><strong>Log out</strong><small>Sign out of this device</small></span><ChevronRight/></button>
       </section>
       <section className="st-card st-danger"><h2>ACCOUNT MANAGEMENT</h2><div className="st-detail-row st-unavailable" aria-disabled="true"><Trash2/><span><strong>Delete account</strong><small>Account deletion is not available yet. Contact support for account assistance.</small></span><span className="st-unavailable-label">Unavailable</span></div></section>
@@ -210,10 +215,10 @@ export default function SettingsDestination({ onBack = () => {}, onSubpageChange
       <section className="st-account-summary" aria-label="Signed-in account">
         <span className="st-account-avatar" aria-hidden="true">{(session?.user?.user_metadata?.display_name || session?.user?.email || "C").slice(0, 1).toUpperCase()}</span>
         <span className="st-account-copy"><strong>{session?.user?.user_metadata?.display_name || "Your Chatly account"}</strong><small>{session?.user?.email || "Account details"}</small></span>
-        <button type="button" onClick={() => { setView("profile"); setNotice(""); onSubpageChange(true); }} aria-label="Open Account Center">Manage <ChevronRight/></button>
+        <button type="button" onClick={() => { navigateTo("profile"); setNotice(""); onSubpageChange(true); }} aria-label="Open Account Center">Manage <ChevronRight/></button>
       </section>
       <div className="st-search-wrap" id="st-settings-results"><label className="st-search"><Search aria-hidden="true"/><span className="sr-only">Search settings</span><input type="search" value={settingsQuery} onChange={e => setSettingsQuery(e.target.value)} placeholder="Search settings, privacy, notifications…" aria-label="Search settings" aria-controls="st-settings-results"/></label>{settingsQuery && <button type="button" className="st-search-clear" onClick={() => setSettingsQuery("")} aria-label="Clear settings search"><X aria-hidden="true"/> Clear</button>}</div><p className="st-search-count" hidden={!settingsQuery.trim()} role="status" aria-live="polite">{settingsQuery.trim() ? `${groups.flatMap(group => group.items).filter(item => `${item.title} ${item.detail} ${({privacy:"security visibility private profile follow requests",notifications:"alerts push likes comments mentions",appearance:"display color font theme",chats:"messages media typing downloads",account:"login password email profile username",help:"support contact report problem",about:"version app policies"}[item.id] || "")}`.toLowerCase().includes(settingsQuery.trim().toLowerCase())).length} matching settings` : " "}</p>
-      {groups.map(group => { const matches = group.items.filter(item => `${item.title} ${item.detail} ${({privacy:"security visibility",notifications:"alerts push",appearance:"display color font",chats:"messages media typing",account:"login password email",help:"support contact",about:"version app"}[item.id] || "")}`.toLowerCase().includes(settingsQuery.trim().toLowerCase())); return matches.length ? <section className="st-group" key={group.label}><h2>{group.label}</h2><div className="st-nav-card">{matches.map(({id,title,detail,Icon}) => <button key={id} className="st-nav-row" aria-label={`${title}: ${detail}`} onClick={() => { setView(id); setSettingsQuery(""); onSubpageChange(true); setNotice(""); setMessage(""); }}><span className="st-icon"><Icon/></span><span className="st-nav-copy"><strong>{title}</strong><small>{detail}</small></span><ChevronRight className="st-chevron"/></button>)}</div></section> : null; })}
+      {groups.map(group => { const matches = group.items.filter(item => `${item.title} ${item.detail} ${({privacy:"security visibility",notifications:"alerts push",appearance:"display color font",chats:"messages media typing",account:"login password email",help:"support contact",about:"version app"}[item.id] || "")}`.toLowerCase().includes(settingsQuery.trim().toLowerCase())); return matches.length ? <section className="st-group" key={group.label}><h2>{group.label}</h2><div className="st-nav-card">{matches.map(({id,title,detail,Icon}) => <button key={id} className="st-nav-row" aria-label={`${title}: ${detail}`} onClick={() => { navigateTo(id); setSettingsQuery(""); onSubpageChange(true); setNotice(""); setMessage(""); }}><span className="st-icon"><Icon/></span><span className="st-nav-copy"><strong>{title}</strong><small>{detail}</small></span><ChevronRight className="st-chevron"/></button>)}</div></section> : null; })}
       {settingsQuery.trim() && !groups.some(group => group.items.some(item => `${item.title} ${item.detail} ${item.id} ${({privacy:"security visibility",notifications:"alerts push",appearance:"display color font",chats:"messages media typing",account:"login password email",help:"support contact",about:"version app"}[item.id] || "")}`.toLowerCase().includes(settingsQuery.trim().toLowerCase()))) && <p className="st-note" role="status">No settings match “{settingsQuery}”. Try another search.</p>}
       
     </> : <><header className="st-subheader"><button type="button" aria-label="Back to settings" title="Back to settings" onClick={back}><ArrowLeft/></button><div><span>SETTINGS</span><h1>{title}</h1></div></header>{detailContent()}</>}

@@ -21,6 +21,7 @@ test("follow interactions remain disabled while loading or saving", () => {
 });
 
 const settings = await readFile(new URL("../src/components/SettingsDestination.jsx", import.meta.url), "utf8");
+const app = await readFile(new URL("../src/App.jsx", import.meta.url), "utf8");
 
 test("account email settings use a correctly escaped email validation pattern", () => {
   assert.ok(settings.includes(String.raw`/^[^\s@]+@[^\s@]+\.[^\s@]+$/`));
@@ -34,8 +35,46 @@ test("settings Manage opens the dedicated Account Center destination", () => {
 });
 
 test("account profile and sign-in options navigate to separate destinations", () => {
-  assert.match(settings, /setView\("email"\)/);
-  assert.match(settings, /setView\("password"\)/);
+  assert.match(settings, /navigateTo\("email"\)/);
+  assert.match(settings, /navigateTo\("password"\)/);
   assert.match(settings, /if \(view === "email"\)/);
   assert.match(settings, /if \(view === "password"\)/);
+});
+
+test("Account Center is the single account destination from settings home", () => {
+  assert.match(settings, /id: "profile", title: "Account Center"/);
+  assert.match(settings, /if \(view === "profile"\)/);
+  assert.doesNotMatch(settings, /if \(view === "account"\)/);
+  assert.match(settings, /navigateTo\("profile"\)/);
+});
+
+test("Account Center retains sign-in, logout, and account management actions", () => {
+  assert.match(settings, /navigateTo\("email"\)/);
+  assert.match(settings, /navigateTo\("password"\)/);
+  assert.match(settings, /setLogoutOpen\(true\)/);
+  assert.match(settings, /Delete account/);
+});
+
+test("profile editor opens as a full-screen Account Center destination", () => {
+  assert.match(app, /className="modal-backdrop edit-profile-destination"/);
+  assert.match(app, /height: "100dvh", maxHeight: "100dvh"/);
+  assert.match(app, /aria-label="Back to Account Center"/);
+});
+
+test("settings navigation remembers parent destinations for browser back", () => {
+  assert.match(settings, /const viewHistory = useRef\(\[\]\)/);
+  assert.match(settings, /viewHistory\.current = \[\.\.\.viewHistory\.current, view\]/);
+  assert.match(settings, /viewHistory\.current\.pop\(\) \|\| "home"/);
+  assert.match(settings, /skipHistoryPush\.current = true/);
+});
+
+test("nested settings destinations use the shared navigation function", () => {
+  assert.match(settings, /navigateTo\("email"\)/);
+  assert.match(settings, /navigateTo\("password"\)/);
+  assert.match(settings, /navigateTo\("profile"\)/);
+  assert.match(settings, /navigateTo\(id\)/);
+});
+
+test("browser back consumes its history marker before checking the home destination", () => {
+  assert.ok(settings.indexOf("if (skipHistoryPush.current)") < settings.indexOf("if (view === \"home\")"));
 });
