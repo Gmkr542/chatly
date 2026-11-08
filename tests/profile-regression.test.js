@@ -21,6 +21,7 @@ test("follow interactions remain disabled while loading or saving", () => {
 });
 
 const settings = await readFile(new URL("../src/components/SettingsDestination.jsx", import.meta.url), "utf8");
+const app = await readFile(new URL("../src/App.jsx", import.meta.url), "utf8");
 
 test("account email settings use a correctly escaped email validation pattern", () => {
   assert.ok(settings.includes(String.raw`/^[^\s@]+@[^\s@]+\.[^\s@]+$/`));
@@ -52,4 +53,10 @@ test("Account Center retains sign-in, logout, and account management actions", (
   assert.match(settings, /setView\("password"\)/);
   assert.match(settings, /setLogoutOpen\(true\)/);
   assert.match(settings, /Delete account/);
+});
+
+test("profile editor opens as a full-screen Account Center destination", () => {
+  assert.match(app, /className="modal-backdrop edit-profile-destination"/);
+  assert.match(app, /height: "100dvh", maxHeight: "100dvh"/);
+  assert.match(app, /aria-label="Back to Account Center"/);
 });
