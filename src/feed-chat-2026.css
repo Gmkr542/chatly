@@ -1,0 +1,303 @@
+/* Chatly 2026 — Feed and conversation visual layer.
+   Presentation-only overrides: existing component state, data and event handlers remain unchanged. */
+
+/* Feed surface and post rhythm */
+.app-shell .feed-page {
+  width: 100%;
+  min-width: 0;
+  color: var(--text-primary);
+}
+.app-shell .feed-page .feed-column {
+  width: 100%;
+  max-width: none;
+  min-width: 0;
+}
+.app-shell .feed-page .posts-list {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-3);
+  padding: 0 var(--space-4) var(--space-8);
+}
+.app-shell .feed-page .post-card {
+  min-width: 0;
+  padding: var(--space-4);
+  border: 1px solid var(--border-subtle);
+  border-radius: var(--radius-xl);
+  background: var(--bg-surface-elevated);
+  color: var(--text-primary);
+  box-shadow: var(--chatly-shadow-card);
+  transition: border-color 200ms cubic-bezier(.4, 0, .2, 1), box-shadow 200ms cubic-bezier(.4, 0, .2, 1);
+}
+.app-shell .feed-page .post-card:hover {
+  border-color: var(--border-strong);
+  box-shadow: var(--chatly-shadow-soft);
+}
+.app-shell .feed-page .post-author {
+  display: flex;
+  align-items: center;
+  gap: var(--space-2);
+  min-width: 0;
+}
+.app-shell .feed-page .post-author-profile {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--space-3);
+  min-width: 0;
+  min-height: 44px;
+  color: var(--text-primary);
+}
+.app-shell .feed-page .post-author-profile > span:last-child {
+  display: flex;
+  flex-direction: column;
+  min-width: 0;
+}
+.app-shell .feed-page .post-author-profile b {
+  color: var(--text-primary);
+  font-size: var(--text-sm);
+  font-weight: var(--weight-semibold);
+  line-height: var(--lh-sm);
+}
+.app-shell .feed-page .post-author-profile small {
+  color: var(--text-secondary);
+  font-size: var(--text-xs);
+  line-height: var(--lh-xs);
+}
+.app-shell .feed-page .post-author .mini-avatar {
+  flex: 0 0 40px;
+  width: 40px;
+  height: 40px;
+  border-radius: var(--radius-full);
+  overflow: hidden;
+}
+.app-shell .feed-page .post-author .mini-avatar img {
+  display: block;
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+.app-shell .feed-page .post-follow-button,
+.app-shell .feed-page .post-options-trigger {
+  min-width: 44px;
+  min-height: 44px;
+}
+.app-shell .feed-page .post-body {
+  margin: var(--space-3) 0;
+  color: var(--text-primary);
+  font-size: var(--text-base);
+  line-height: var(--lh-lg);
+  overflow-wrap: anywhere;
+}
+.app-shell .feed-page .post-media {
+  position: relative;
+  width: 100%;
+  aspect-ratio: 16 / 9;
+  margin: var(--space-3) 0;
+  overflow: hidden;
+  border: 1px solid var(--border-subtle);
+  border-radius: var(--radius-lg);
+  background: var(--bg-primary);
+}
+.app-shell .feed-page .post-media img {
+  display: block;
+  width: 100%;
+  height: 100%;
+  max-height: none;
+  object-fit: contain;
+  border-radius: inherit;
+  cursor: zoom-in;
+}
+.app-shell .feed-page .post-media figcaption {
+  position: absolute;
+  inset-inline-start: var(--space-2);
+  bottom: var(--space-2);
+  padding: 3px var(--space-2);
+  border-radius: var(--radius-full);
+  background: rgb(0 0 0 / 58%);
+  color: #fff;
+  font-size: var(--text-xs);
+  opacity: 0;
+  transition: opacity 200ms cubic-bezier(.4, 0, .2, 1);
+}
+.app-shell .feed-page .post-media:hover figcaption,
+.app-shell .feed-page .post-media:focus-within figcaption {
+  opacity: 1;
+}
+.app-shell .feed-page .post-actions {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: space-between;
+  gap: var(--space-2);
+  padding-top: var(--space-2);
+  border-top: 1px solid var(--border-subtle);
+}
+.app-shell .feed-page .post-actions-primary {
+  display: flex;
+  align-items: center;
+  gap: var(--space-1);
+}
+.app-shell .feed-page .post-actions-primary button,
+.app-shell .feed-page .post-actions button {
+  min-width: 44px;
+  min-height: 44px;
+  border-radius: var(--radius-full);
+  transition: color 200ms cubic-bezier(.4, 0, .2, 1), background-color 200ms cubic-bezier(.4, 0, .2, 1), opacity 200ms cubic-bezier(.4, 0, .2, 1);
+}
+.app-shell .feed-page .post-engagement-meta {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: flex-end;
+  gap: var(--space-2);
+  color: var(--text-muted);
+  font-size: var(--text-xs);
+}
+.app-shell .feed-page .post-engagement-meta time,
+.app-shell .feed-page .post-view-count {
+  color: var(--text-muted);
+}
+
+/* Conversation stream */
+.app-shell .chat-layout {
+  border: 0;
+  border-radius: 0;
+  background: var(--bg-primary);
+  color: var(--text-primary);
+}
+.app-shell .chat-layout .sidebar,
+.app-shell .chat-layout .conversation {
+  border-color: var(--border-subtle);
+  background: var(--bg-surface);
+  color: var(--text-primary);
+}
+.app-shell .chat-layout .message-list {
+  gap: var(--space-2);
+  padding: var(--space-4);
+  background: var(--bg-primary);
+}
+.app-shell .chat-layout .message {
+  display: flex;
+  width: 100%;
+  min-width: 0;
+  margin-block: var(--space-1);
+}
+.app-shell .chat-layout .message.mine {
+  justify-content: flex-end;
+}
+.app-shell .chat-layout .message.theirs {
+  justify-content: flex-start;
+}
+.app-shell .chat-layout .message .bubble {
+  position: relative;
+  width: fit-content;
+  max-width: min(78%, 520px);
+  min-width: 0;
+  padding: var(--space-3) var(--space-4);
+  border: 1px solid transparent;
+  border-radius: var(--radius-xl);
+  overflow-wrap: anywhere;
+  line-height: var(--lh-base);
+  box-shadow: none;
+  transition: opacity 180ms ease, background-color 180ms ease, border-color 180ms ease;
+}
+.app-shell .chat-layout .message.mine .bubble {
+  border-color: transparent;
+  border-radius: var(--radius-xl) var(--radius-xl) var(--radius-sm) var(--radius-xl);
+  background: var(--brand-accent);
+  color: #fff;
+}
+.app-shell .chat-layout .message.theirs .bubble {
+  border-color: var(--border-subtle);
+  border-radius: var(--radius-xl) var(--radius-xl) var(--radius-xl) var(--radius-sm);
+  background: var(--bg-surface-elevated);
+  color: var(--text-primary);
+}
+.app-shell .chat-layout .message .bubble > time {
+  display: block;
+  margin-top: var(--space-2);
+  color: inherit;
+  font-size: var(--text-xs);
+  line-height: var(--lh-xs);
+  opacity: .76;
+  text-align: right;
+}
+.app-shell .chat-layout .message.mine .bubble > time,
+.app-shell .chat-layout .message.mine .bubble .message-read-receipt,
+.app-shell .chat-layout .message.mine .bubble .message-delivery-status {
+  color: #fff !important;
+}
+.app-shell .chat-layout .message.theirs .bubble > time {
+  color: var(--text-secondary);
+}
+.app-shell .chat-layout .message-read-receipt,
+.app-shell .chat-layout .message-delivery-status {
+  display: inline;
+  opacity: .88;
+  transition: opacity 180ms ease;
+}
+.app-shell .chat-layout .message .bubble:hover .message-read-receipt,
+.app-shell .chat-layout .message .bubble:hover .message-delivery-status {
+  opacity: 1;
+}
+.app-shell .chat-layout .conversation-header {
+  border-bottom: 1px solid var(--border-subtle);
+  background: var(--bg-surface);
+}
+.app-shell .chat-layout .composer {
+  border-top: 1px solid var(--border-subtle);
+  background: var(--bg-surface);
+}
+.app-shell .chat-layout .composer textarea {
+  border-color: var(--border-subtle);
+  border-radius: var(--radius-lg);
+  background: var(--bg-surface-elevated);
+  color: var(--text-primary);
+}
+.app-shell .chat-layout .message .bubble :is(.message-reply-preview, .message-copy, .message-reply, .message-edit, .message-delete) {
+  color: inherit;
+}
+.app-shell .chat-layout .message.mine .bubble .message-reply-preview {
+  border-left-color: rgb(255 255 255 / 70%);
+  background: rgb(255 255 255 / 14%);
+  color: #fff;
+}
+.app-shell .chat-layout .message.theirs .bubble .message-reply-preview {
+  border-left-color: var(--brand-accent);
+  background: var(--brand-focus);
+  color: var(--text-primary);
+}
+
+@media (max-width: 767px) {
+  .app-shell .feed-page .posts-list {
+    gap: var(--space-2);
+    padding-inline: var(--space-3);
+  }
+  .app-shell .feed-page .post-card {
+    padding: var(--space-3);
+    border-radius: var(--radius-lg);
+  }
+  .app-shell .chat-layout .message-list {
+    padding: var(--space-3);
+  }
+  .app-shell .chat-layout .message .bubble {
+    max-width: 86%;
+  }
+}
+@media (prefers-reduced-motion: reduce) {
+  .app-shell .feed-page .post-card,
+  .app-shell .feed-page .post-media figcaption,
+  .app-shell .feed-page .post-actions button,
+  .app-shell .chat-layout .message .bubble,
+  .app-shell .chat-layout .message-read-receipt,
+  .app-shell .chat-layout .message-delivery-status {
+    transition: none;
+  }
+}
+
+/* Reserve the mobile navigation and safe-area region below the conversation. */
+@media (max-width: 767px) {
+  .app-shell .chat-layout {
+    height: calc(100dvh - 126px - env(safe-area-inset-bottom, 0px));
+    min-height: 280px;
+  }
+}
