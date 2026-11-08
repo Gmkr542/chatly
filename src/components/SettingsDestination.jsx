@@ -16,13 +16,19 @@ const groups = [
   ]},
 ];
 
-function Toggle({ title, detail, checked, onChange }) {
-  return <label className="st-pref-row"><span><strong>{title}</strong><small>{detail}</small></span><input type="checkbox" checked={Boolean(checked)} onChange={e => onChange(e.target.checked)} /></label>;
+function Toggle({ title, detail, checked, onChange, disabled = false }) {
+  return <label className="st-pref-row"><span><strong>{title}</strong><small>{detail}</small></span><input type="checkbox" checked={Boolean(checked)} disabled={disabled} onChange={e => onChange(e.target.checked)} /></label>;
 }
 
 export default function SettingsDestination({ onBack = () => {}, onSubpageChange = () => {}, theme = "system", setTheme, fontSize, setFontSize, fontFamily, setFontFamily, setNotice, notice, session, accountEmail, setAccountEmail, supabase, password, setPassword, setNewPassword, chatPrefs, setChatPrefs, setEditProfileOpen }) {
   const [view, setView] = useState("home");
   const [settingsQuery, setSettingsQuery] = useState("");
+  const [serverPrivateProfile, setServerPrivateProfile] = useState(false);
+  const [privacyLoading, setPrivacyLoading] = useState(false);
+  const [privacySaving, setPrivacySaving] = useState(false);
+  const [privacyMessage, setPrivacyMessage] = useState("");
+  const [incomingFollowRequests, setIncomingFollowRequests] = useState([]);
+  const [followRequestBusy, setFollowRequestBusy] = useState("");
   useEffect(() => {
     if (view === "home") return undefined;
     window.history.pushState({ chatlySettingsSubpage: view }, "");
@@ -57,6 +63,81 @@ export default function SettingsDestination({ onBack = () => {}, onSubpageChange
   const pref = (key, value) => setChatPrefs(current => ({ ...preferenceDefaults, ...(current || {}), [key]: value }));
   const back = () => { if (view !== "home") window.history.back(); };
 
+  useEffect(() => {
+    if (view !== "privacy" || !session?.user?.id || !supabase) return undefined;
+    let active = true;
+    async function loadPrivacy() {
+      setPrivacyLoading(true);
+      setPrivacyMessage("");
+      try {
+        const [profileResult, requestResult] = await Promise.all([
+          supabase.from("profiles").select("is_private").eq("id", session.user.id).single(),
+          supabase.from("follow_requests").select("requester_id,created_at").eq("target_id", session.user.id).order("created_at", { ascending: false }).limit(50)
+        ]);
+        if (profileResult.error) throw profileResult.error;
+        if (requestResult.error) throw requestResult.error;
+        const requesterIds = (requestResult.data || []).map(row => row.requester_id);
+        const peopleResult = requesterIds.length
+          ? await supabase.from("profiles").select("id,display_name,username,avatar_url").in("id", requesterIds)
+          : { data: [], error: null };
+        if (peopleResult.error) throw peopleResult.error;
+        if (!active) return;
+        const people = new Map((peopleResult.data || []).map(person => [person.id, person]));
+        setServerPrivateProfile(!!profileResult.data?.is_private);
+        setIncomingFollowRequests((requestResult.data || []).map(request => ({
+          ...request,
+          person: people.get(request.requester_id) || { id: request.requester_id, display_name: "Chatly member" }
+        })));
+      } catch (error) {
+        if (active) setPrivacyMessage(error?.message || "Privacy settings could not be loaded. Apply the latest database migration and try again.");
+      } finally {
+        if (active) setPrivacyLoading(false);
+      }
+    }
+    loadPrivacy();
+    return () => { active = false; };
+  }, [view, session?.user?.id, supabase]);
+
+  async function updateServerPrivacy(nextValue) {
+    if (!session?.user?.id || privacySaving) return;
+    setPrivacySaving(true);
+    setPrivacyMessage("");
+    try {
+      const { data, error } = await supabase
+        .from("profiles")
+        .update({ is_private: Boolean(nextValue) })
+        .eq("id", session.user.id)
+        .select("is_private")
+        .single();
+      if (error) throw error;
+      setServerPrivateProfile(!!data.is_private);
+      setPrivacyMessage(data.is_private ? "Private profile enabled. Only approved followers can view your posts." : "Your profile is public. Anyone signed in can view your posts.");
+    } catch (error) {
+      setPrivacyMessage(error?.message || "Could not update account privacy.");
+    } finally {
+      setPrivacySaving(false);
+    }
+  }
+
+  async function respondToFollowRequest(requesterId, accept) {
+    if (!requesterId || followRequestBusy) return;
+    setFollowRequestBusy(requesterId);
+    setPrivacyMessage("");
+    try {
+      const { error } = await supabase.rpc("respond_to_follow_request", {
+        p_requester_id: requesterId,
+        p_accept: Boolean(accept)
+      });
+      if (error) throw error;
+      setIncomingFollowRequests(current => current.filter(item => item.requester_id !== requesterId));
+      setPrivacyMessage(accept ? "Follow request approved." : "Follow request declined.");
+    } catch (error) {
+      setPrivacyMessage(error?.message || "Could not update follow request.");
+    } finally {
+      setFollowRequestBusy("");
+    }
+  }
+
   function detailContent() {
     if (view === "account") return <>
       <section className="st-card"><h2>PERSONAL INFORMATION</h2>
@@ -72,7 +153,30 @@ export default function SettingsDestination({ onBack = () => {}, onSubpageChange
       <section className="st-card st-danger"><h2>ACCOUNT MANAGEMENT</h2><div className="st-detail-row st-unavailable" aria-disabled="true"><Trash2/><span><strong>Delete account</strong><small>Account deletion is not available yet. Contact support for account assistance.</small></span><span className="st-unavailable-label">Unavailable</span></div></section>
       {notice && <p className={`st-message ${emailResultType === "error" ? "is-error" : emailResultType === "success" ? "is-success" : ""}`} role="status" aria-live="polite">{notice}</p>}
     </>;
-    if (view === "privacy") return <section className="st-card"><h2>MESSAGING PRIVACY</h2><Toggle title="Read receipts" detail="Let people know when you have read their messages" checked={safePrefs.readReceipts} onChange={v => pref("readReceipts", v)}/><Toggle title="Private profile" detail="Keep your profile visible only to approved followers (local preference)" checked={safePrefs.privateProfile} onChange={v => pref("privateProfile", v)}/><Toggle title="Message requests" detail="Allow messages from people outside your connections" checked={safePrefs.messageRequests} onChange={v => pref("messageRequests", v)}/><p className="st-note">Saved on this device. Server-side enforcement requires matching backend support.</p></section>;
+    if (view === "privacy") return <>
+      <section className="st-card">
+        <h2>ACCOUNT PRIVACY</h2>
+        <Toggle title="Private profile" detail="Only approved followers can view your posts, comments and likes." checked={serverPrivateProfile} disabled={privacyLoading || privacySaving} onChange={updateServerPrivacy}/>
+        {privacyLoading && <p className="st-note" role="status">Loading privacy settings…</p>}
+        {privacySaving && <p className="st-note" role="status">Saving privacy setting…</p>}
+        <p className="st-note">Public accounts remain discoverable. Existing followers are preserved when you switch to private.</p>
+        {privacyMessage && <p className="st-message" role="status" aria-live="polite">{privacyMessage}</p>}
+      </section>
+      <section className="st-card">
+        <h2>FOLLOW REQUESTS ({incomingFollowRequests.length})</h2>
+        {privacyLoading ? <p className="st-note">Loading requests…</p> : incomingFollowRequests.length ? incomingFollowRequests.map(request => <div className="st-follow-request" key={request.requester_id}>
+          <span><strong>{request.person.display_name || "Chatly member"}</strong><small>{request.person.username ? "@" + request.person.username : "Wants to follow you"}</small></span>
+          <button type="button" disabled={!!followRequestBusy} onClick={() => respondToFollowRequest(request.requester_id, true)}>{followRequestBusy === request.requester_id ? "…" : "Accept"}</button>
+          <button type="button" className="st-follow-reject" disabled={!!followRequestBusy} onClick={() => respondToFollowRequest(request.requester_id, false)}>Decline</button>
+        </div>) : <p className="st-note">No pending follow requests.</p>}
+      </section>
+      <section className="st-card">
+        <h2>MESSAGING PRIVACY</h2>
+        <Toggle title="Read receipts" detail="Let people know when you have read their messages" checked={safePrefs.readReceipts} onChange={v => pref("readReceipts", v)}/>
+        <Toggle title="Message requests" detail="Allow messages from people outside your connections" checked={safePrefs.messageRequests} onChange={v => pref("messageRequests", v)}/>
+        <p className="st-note">Messaging preferences are saved on this device.</p>
+      </section>
+    </>;
     if (view === "notifications") return <section className="st-card"><h2>NOTIFICATION PREFERENCES</h2><Toggle title="Message alerts" detail="Get in-app alerts for new messages" checked={safePrefs.messageAlerts} onChange={v => pref("messageAlerts", v)}/><Toggle title="Activity alerts" detail="Get alerts about community activity" checked={safePrefs.activityAlerts} onChange={v => pref("activityAlerts", v)}/><Toggle title="Likes" detail="Alerts when someone likes your posts" checked={safePrefs.likesAlerts} onChange={v => pref("likesAlerts", v)}/><Toggle title="Comments" detail="Alerts for comments on your posts" checked={safePrefs.commentAlerts} onChange={v => pref("commentAlerts", v)}/><Toggle title="Mentions" detail="Alerts when someone mentions you" checked={safePrefs.mentionAlerts} onChange={v => pref("mentionAlerts", v)}/><p className="st-note">These are device-level preferences and do not change operating-system notification permissions.</p><button type="button" className="st-reset-button" onClick={() => setResetDialog("notifications")}>Reset notification preferences</button>{message && <p className="st-message" role="status" aria-live="polite">{message}</p>}</section>;
     if (view === "chats") return <section className="st-card"><h2>MESSAGE PREFERENCES</h2><Toggle title="Enter to send" detail="Send messages by pressing Enter" checked={safePrefs.enterToSend} onChange={v => pref("enterToSend", v)}/><Toggle title="Media previews" detail="Show previews for shared media when available" checked={safePrefs.mediaPreview} onChange={v => pref("mediaPreview", v)}/><Toggle title="Auto-download media" detail="Automatically load shared images and videos (local preference)" checked={safePrefs.autoDownloadMedia} onChange={v => pref("autoDownloadMedia", v)}/><button type="button" className="st-reset-button" onClick={() => setResetDialog("chats")}>Reset chat preferences</button><p className="st-note">Restore default message preferences on this device.</p>{message && <p className="st-message" role="status" aria-live="polite">{message}</p>}</section>;
     if (view === "appearance") return <>
