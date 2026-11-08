@@ -176,3 +176,10 @@
 .st-follow-request button:disabled{opacity:.55;cursor:not-allowed}
 .st-follow-request .st-follow-reject{border-color:var(--border);background:var(--surface);color:var(--text)}
 @media(max-width:420px){.st-follow-request{gap:6px}.st-follow-request button{padding:7px 8px}}
+
+
+/* Explicit save action for account privacy changes. */
+.st-privacy-save-row{display:flex;align-items:center;gap:10px;flex-wrap:wrap;margin-top:12px}
+.st-privacy-save{min-height:40px;padding:9px 14px;border:1px solid #7566e8;border-radius:10px;background:#7566e8;color:#fff;font-size:13px;font-weight:650;cursor:pointer}
+.st-privacy-save:disabled{opacity:.45;cursor:not-allowed}
+.st-privacy-save-row>span{font-size:11px;color:var(--muted)}
