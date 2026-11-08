@@ -1,0 +1,32 @@
+name: App Manager CI
+
+on:
+  push:
+    branches: [main]
+    paths:
+      - "app-manager/**"
+      - ".github/workflows/app-manager.yml"
+  pull_request:
+    branches: [main]
+    paths:
+      - "app-manager/**"
+      - ".github/workflows/app-manager.yml"
+
+permissions:
+  contents: read
+
+concurrency:
+  group: app-manager-ci-${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  security-tests:
+    name: App Manager security primitives
+    runs-on: ubuntu-latest
+    timeout-minutes: 5
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+      - run: node --test app-manager/server/security-tests.js
