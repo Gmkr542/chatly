@@ -10,6 +10,7 @@ import "./professional-ui.css";
 import "./components/FeedHeader.css";
 import "./booster-polish.css";
 import "./auth-polish.css";
+import "./design-tokens.css";
 
 createRoot(document.getElementById("root")).render(
   <React.StrictMode>
