@@ -29,11 +29,14 @@ test("private content access is enforced for posts, comments, and likes", () => 
   assert.match(migration, /Viewers can read likes on visible posts/i);
   assert.match(migration, /Users can comment on visible posts/i);
   assert.match(migration, /Users can like visible posts as themselves/i);
+  assert.match(migration, /Users can record their own visible post views/i);
+  assert.match(migration, /public\.get_post_view_counts\(post_ids bigint\[\]\)/i);
+  assert.match(migration, /public\.can_view_profile_content\(parent_post\.user_id\)/i);
 });
 
 test("privileged functions have fixed search paths and authenticated-only execution", () => {
   const functionBlocks = migration.match(/CREATE OR REPLACE FUNCTION[\s\S]*?\$\$;/gi) || [];
-  assert.equal(functionBlocks.length, 3);
+  assert.equal(functionBlocks.length, 5);
   for (const block of functionBlocks) {
     assert.match(block, /SECURITY DEFINER/i);
     assert.match(block, /SET search_path = ''/i);
