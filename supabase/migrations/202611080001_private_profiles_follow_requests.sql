@@ -337,7 +337,7 @@ LANGUAGE sql
 STABLE
 SECURITY DEFINER
 SET search_path = ''
-AS $
+AS $$
   SELECT view_row.post_id, count(*)::bigint
   FROM public.post_views AS view_row
   INNER JOIN public.posts AS parent_post
