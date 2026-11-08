@@ -298,7 +298,7 @@ RETURNS boolean
 LANGUAGE plpgsql
 SECURITY DEFINER
 SET search_path = ''
-AS $
+AS $$
 DECLARE
   inserted_count integer;
 BEGIN
@@ -322,7 +322,7 @@ BEGIN
   GET DIAGNOSTICS inserted_count = ROW_COUNT;
   RETURN inserted_count = 1;
 END;
-$;
+$$;
 
 CREATE OR REPLACE FUNCTION public.get_post_view_counts(post_ids bigint[])
 RETURNS TABLE(post_id bigint, view_count bigint)
@@ -338,7 +338,7 @@ AS $
   WHERE view_row.post_id = ANY(post_ids)
     AND public.can_view_profile_content(parent_post.user_id)
   GROUP BY view_row.post_id;
-$;
+$$;
 
 REVOKE ALL ON FUNCTION public.record_post_view(bigint) FROM PUBLIC, anon;
 GRANT EXECUTE ON FUNCTION public.record_post_view(bigint) TO authenticated;
