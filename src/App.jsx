@@ -13,6 +13,7 @@ import NotificationsDestination from "./components/NotificationsDestination.jsx"
 import PublicProfile from "./components/PublicProfile.jsx";
 import DestinationHeader from "./components/DestinationHeader.jsx";
 import HistoryDestination from "./components/HistoryDestination.jsx";
+import AppNavigation from "./components/AppNavigation.jsx";
 
 const initialProfile = { display_name: "", username: "", avatar_url: "", bio: "" };
 
@@ -405,16 +406,7 @@ export default function App() {
     {tab === "settings" && <SettingsDestination onBack={() => { setSettingsOpen(false); setSettingsView("home"); setSettingsSubpage(false); setTab("feed"); }} onSubpageChange={setSettingsSubpage} theme={theme} effectiveTheme={effectiveTheme} setTheme={setTheme} fontSize={fontSize} setFontSize={setFontSize} fontFamily={fontFamily} setFontFamily={setFontFamily} fontSizeExpanded={fontSizeExpanded} setFontSizeExpanded={setFontSizeExpanded} fontFamilyExpanded={fontFamilyExpanded} setFontFamilyExpanded={setFontFamilyExpanded} accountInfoExpanded={accountInfoExpanded} setAccountInfoExpanded={setAccountInfoExpanded} editProfileOpen={editProfileOpen} setEditProfileOpen={setEditProfileOpen} setNotice={setNotice} notice={notice} session={session} emailExpanded={emailExpanded} setEmailExpanded={setEmailExpanded} accountEmail={accountEmail} setAccountEmail={setAccountEmail} supabase={supabase} passwordExpanded={passwordExpanded} setPasswordExpanded={setPasswordExpanded} password={password} setPassword={setPassword} setNewPassword={setNewPassword} settingsExpanded={settingsExpanded} setSettingsExpanded={setSettingsExpanded} chatPrefs={chatPrefs} setChatPrefs={setChatPrefs} />}
 
     </main>
-    <nav className="app-mobile-nav" aria-label="Main destinations">
-      {primaryNavItems.map(item => {
-        const selected = tab === item.tab || (item.tab === "profile" && ["public-profile", "history", "settings"].includes(tab));
-        const Icon = item.icon;
-        return <button key={item.tab} type="button" className={`app-mobile-nav-item${selected ? " is-active" : ""}`} aria-current={selected ? "page" : undefined} aria-label={item.label} title={item.label} onClick={() => { setProfileMenuOpen(false); setTab(item.tab); }}>
-          <Icon size={20} strokeWidth={selected ? 2.2 : 1.9} aria-hidden="true" />
-          <span>{item.label}</span>
-        </button>;
-      })}
-    </nav>
+    <AppNavigation activeTab={tab} unreadCount={unreadNotifications} onNavigate={nextTab => { setProfileMenuOpen(false); setChatTarget(null); setTab(nextTab); }} />
     {globalVideo && <aside className={"global-youtube-player" + (globalPlayerMinimized ? " is-minimized" : "")} style={globalPlayerPosition ? { left: globalPlayerPosition.x, top: globalPlayerPosition.y, right: "auto", bottom: "auto" } : undefined} aria-label="YouTube player">
       <div className="global-youtube-player-head" onPointerDown={startPlayerDrag} title="Drag to move player"><span>{globalVideo.snippet?.title || "YouTube video"}</span>
         <div className="global-youtube-player-actions"><a href={"https://www.youtube.com/watch?v=" + encodeURIComponent(globalVideo.id?.videoId || "")} target="_blank" rel="noreferrer" aria-label="Open video on YouTube" title="Open on YouTube">↗</a>
