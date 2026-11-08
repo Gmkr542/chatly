@@ -1,5 +1,5 @@
 import { useEffect, useState } from "react";
-import { ArrowLeft, Bookmark, Heart, MessageCircle, RefreshCw } from "lucide-react";
+import { ArrowLeft, Bookmark, Heart, RefreshCw } from "lucide-react";
 import { supabase } from "../lib/supabase";
 
 export default function HistoryDestination({ session, onBack }) {
