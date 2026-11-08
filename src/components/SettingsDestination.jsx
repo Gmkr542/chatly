@@ -4,7 +4,7 @@ import "./SettingsDestination.css";
 import { SETTINGS_PREFERENCE_DEFAULTS, normalizeSettingsPreferences, updateSettingsPreference } from "../lib/settingsPreferences.js";
 
 const groups = [
-  { label: "YOUR ACCOUNT", items: [{ id: "account", title: "Account", detail: "Personal information and sign-in", Icon: UserRound }] },
+  { label: "YOUR ACCOUNT", items: [{ id: "profile", title: "Account Center", detail: "Profile, sign-in and account management", Icon: UserRound }] },
   { label: "PREFERENCES", items: [
     { id: "privacy", title: "Privacy & security", detail: "Read receipts and account privacy", Icon: ShieldCheck },
     { id: "notifications", title: "Notifications", detail: "Choose what you want to be notified about", Icon: Bell },
@@ -150,17 +150,8 @@ export default function SettingsDestination({ onBack = () => {}, onSubpageChange
         <button className="st-detail-row" onClick={() => { setEditProfileOpen(true); setNotice(""); }}><UserCog/><span><strong>Edit profile</strong><small>Update your name, username, profile photo and bio</small></span><ChevronRight/></button>
       </section>
       <section className="st-card"><h2>SIGN-IN & SECURITY</h2>
-        <button className="st-detail-row" onClick={() => { setView("email"); setEmailAttempted(false); setNotice(""); onSubpageChange(true); }}><Mail/><span><strong>Email address</strong><small>{session?.user?.email || "Manage your sign-in email"}</small></span><ChevronRight/></button>
-        <button className="st-detail-row" onClick={() => { setView("password"); setPasswordConfirm(""); setPasswordVisible(false); setNotice(""); onSubpageChange(true); }}><KeyRound/><span><strong>Change password</strong><small>Update your sign-in password</small></span><ChevronRight/></button>
-      </section>
-    </>;
-    if (view === "account") return <>
-      <section className="st-card"><h2>PERSONAL INFORMATION</h2>
-        <button className="st-detail-row" onClick={() => { setEditProfileOpen(true); setNotice(""); }}><UserCog/><span><strong>Edit profile</strong><small>Display name, username, photo and bio</small></span><ChevronRight/></button>
         <button className="st-detail-row" onClick={() => { setView("email"); setEmailAttempted(false); setNotice(""); onSubpageChange(true); }}><Mail/><span><strong>Email address</strong><small>{session?.user?.email || "Manage your sign-in email"} · {session?.user?.email_confirmed_at ? "Verified" : session?.user?.email_confirmed_at === null ? "Unverified" : "Verification status unavailable"}</small></span><ChevronRight/></button>
-      </section>
-      <section className="st-card"><h2>SECURITY & SIGN-IN</h2>
-        <button className="st-detail-row" onClick={() => { setView("password"); setPasswordConfirm(""); setPasswordVisible(false); setNotice(""); onSubpageChange(true); }}><KeyRound/><span><strong>Change password</strong><small>Choose a new password</small></span><ChevronRight/></button>
+        <button className="st-detail-row" onClick={() => { setView("password"); setPasswordConfirm(""); setPasswordVisible(false); setNotice(""); onSubpageChange(true); }}><KeyRound/><span><strong>Change password</strong><small>Update your sign-in password</small></span><ChevronRight/></button>
         <button className="st-detail-row" onClick={() => setLogoutOpen(true)}><LogOut/><span><strong>Log out</strong><small>Sign out of this device</small></span><ChevronRight/></button>
       </section>
       <section className="st-card st-danger"><h2>ACCOUNT MANAGEMENT</h2><div className="st-detail-row st-unavailable" aria-disabled="true"><Trash2/><span><strong>Delete account</strong><small>Account deletion is not available yet. Contact support for account assistance.</small></span><span className="st-unavailable-label">Unavailable</span></div></section>
