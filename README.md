@@ -1,95 +1,114 @@
 # Chatly
 
-A small React + Supabase real-time chat starter. Deploy the frontend as a Render Static Site and use Supabase for authentication, profile lookup, message persistence, and live updates.
+Chatly is a responsive social and messaging application built with React, Vite, and Supabase. The frontend includes a social feed, profiles, discovery, notifications, direct and group conversations, and account settings. Supabase provides authentication, PostgreSQL data, storage, and realtime updates.
 
-## Folder structure
+## Application architecture
+
+- **Frontend:** React 19, Vite 8, and Lucide icons.
+- **Backend services:** Supabase Auth, Postgres, Storage, and Realtime, accessed through the Supabase JavaScript client.
+- **Application shell:** `src/App.jsx` owns session bootstrap, top-level destinations, profile flows, and shared application state.
+- **Feature components:** `src/components/` contains authentication, feed, chat, group creation, profiles, Explore/search, notifications, history, and settings.
+- **Shared utilities:** `src/lib/` contains the Supabase client, guarded browser-storage helpers, and settings-preference normalization.
+- **Styling:** `src/styles.css`, `src/professional-ui.css`, feature polish stylesheets, and component-specific styles.
+- **Database:** `supabase/schema.sql` is the bootstrap schema; `supabase/migrations/` contains incremental database changes and security hardening.
+- **Tests:** `tests/` contains Node.js regression tests for core UI, account, chat, feed, Explore, settings, storage, and database-security contracts.
+- **CI:** `.github/workflows/ci.yml` runs regression tests, a Vite production build, and a Docker image build for pull requests and pushes to `main`.
+
+## Implemented application areas
+
+- Email/password authentication and configured OAuth providers.
+- Profile creation, editing, avatars, profile discovery, and follow relationships.
+- Public/private profile behavior and follow requests.
+- Feed creation, post privacy, likes, comments, sharing, bookmarks, and views.
+- Direct messages, replies, editing/deletion, delivery/read state, and realtime updates.
+- Group creation, membership, group messaging, and group-management RPCs.
+- Activity notifications and unread filtering.
+- Explore, people/post discovery, and YouTube video search.
+- Settings destinations for privacy, notifications, appearance, chat preferences, and account management.
+
+This inventory describes the codebase; actual production availability also depends on Supabase configuration, applied migrations, RLS policies, storage policies, and configured third-party API keys.
+
+## Repository structure
 
 ```text
-Chatly/
+.
+├── .github/workflows/ci.yml
+├── docker/nginx/default.conf
 ├── public/
 ├── src/
 │   ├── components/
-│   │   ├── Auth.jsx
-│   │   └── Chat.jsx
+│   │   └── explore/
 │   ├── lib/
-│   │   └── supabase.js
 │   ├── App.jsx
 │   ├── main.jsx
-│   └── styles.css
+│   └── stylesheets
+├── supabase/
+│   ├── migrations/
+│   ├── schema.sql
+│   └── security_audit.sql
+├── tests/
 ├── .env.example
-├── .gitignore
-├── index.html
+├── Dockerfile
 ├── package.json
 ├── render.yaml
-├── vite.config.js
-└── supabase/
-    └── schema.sql
+└── vite.config.js
 ```
 
-## Setup
+## Local development
 
-1. Create a project at [Supabase](https://supabase.com/).
-2. Open Supabase **SQL Editor** and run `supabase/schema.sql`.
-3. In Supabase Project Settings → API, copy the project URL and publishable/anon key.
-4. Copy `.env.example` to `.env.local` and fill in:
+1. Create a project in [Supabase](https://supabase.com/).
+2. Configure the database using the bootstrap schema and the applicable migrations. Read the migration-safety notes below before applying migration files.
+3. Copy `.env.example` to `.env.local` and configure:
+
    ```env
    VITE_SUPABASE_URL=https://your-project.supabase.co
-   VITE_SUPABASE_ANON_KEY=your-public-anon-key
+   VITE_SUPABASE_ANON_KEY=your-supabase-publishable-or-anon-key
+   VITE_YOUTUBE_API_KEY=your-restricted-youtube-api-key
    ```
-5. Install and run:
+
+   The YouTube key is optional unless YouTube discovery is being used. Restrict it to the Chatly site's referrers and the YouTube Data API v3.
+
+4. Install dependencies and start the development server:
+
    ```bash
    npm install
    npm run dev
    ```
-6. To deploy, push the project to a Git repository and create a Render **Static Site**. Build command: `npm install && npm run build`; publish directory: `dist`. Add the two `VITE_SUPABASE_*` environment variables in Render.
 
+5. Run the repository checks:
 
-## Database migrations and checks
+   ```bash
+   npm test
+   npm run build
+   ```
 
-- For a fresh Supabase project, run `supabase/schema.sql` first, then apply every file in `supabase/migrations/` in ascending filename order using the Supabase SQL Editor. For an existing deployment, apply only migrations that have not already been applied.
-- Keep the migration files in version control and apply them to staging before production. The frontend build does not execute SQL migrations or verify live Row Level Security policies.
-- Run `npm test` for source-level regression checks and `npm run build` for the production bundle. GitHub Actions runs both on pushes and pull requests targeting `main`.
-- Only configure public Supabase keys and a referrer-restricted YouTube API key in frontend variables. Never expose a service-role key in a `VITE_*` variable.
+## Supabase migration safety
 
-## Release verification checklist
+- `supabase/schema.sql` is a bootstrap schema, not a verified snapshot of the current production database. Existing deployments must be checked before applying it.
+- Apply only migrations that are not already present in the target database's migration history. Test changes against a staging project before production.
+- **Migration-version warning:** the current migration directory contains duplicate timestamp/version prefixes across multiple files. Reconcile these filenames with the actual Supabase migration history before using CLI migration commands or renaming any migration. Do not blindly rename, reorder, or replay migrations that may already have been applied.
+- When using the SQL Editor, inspect each migration's dependencies and apply only the required unapplied SQL in a controlled order.
+- Never delete production tables, data, RLS policies, triggers, RPCs, or storage policies as routine cleanup.
+- The frontend build and source-level tests do not execute migrations or verify live database state, production RLS policies, realtime publication settings, or storage permissions.
 
-Before promoting a deployment, verify these items against the actual Supabase project:
+## Environment and secrets
 
-- [ ] Confirm the latest GitHub Actions run has passed both `npm test` and `npm run build`.
-- [ ] Confirm the frontend has `VITE_SUPABASE_URL` and `VITE_SUPABASE_ANON_KEY` configured in the target environment.
-- [ ] Apply the SQL schema and unapplied migrations in order; verify the required tables and RPCs exist before testing the UI.
-- [ ] Verify Row Level Security policies for posts, comments, likes, saves, notifications, direct messages, and group membership using separate test accounts.
-- [ ] Test unread/read transitions, live message delivery, and notification updates with two accounts in separate sessions.
-- [ ] Check mobile widths and keyboard-only navigation on the deployed site.
-- [ ] Never place a Supabase service-role key in browser variables or commit secrets to the repository.
+Only public browser configuration belongs in `VITE_*` variables. The Supabase publishable/anon key is intended for browser use when RLS is correctly configured. Never expose a Supabase service-role key, database password, or other private credential in frontend variables, Docker build arguments, or committed files.
 
-A green build confirms compilation and repository regression checks only; it does not prove that production credentials, database schema, RLS policies, or realtime publication settings are correct.
+## Render static-site deployment
 
-## Important notes
+The existing Render configuration is a static site:
 
-- This is a starter app, not a production-audited messaging platform.
-- Supabase's public/anon key is designed to be used in the browser; **never put a service-role key in frontend environment variables**.
-- The SQL enables row-level security (RLS). Review policies before adding features.
-- User discovery is limited to profiles that have opted in / are listed in the app. For a production app, consider privacy controls, abuse reporting, rate limits, and stronger profile-discovery rules.
-- Free plans have quotas and can change; check current provider terms.
+- Build command: `npm install && npm run build`
+- Publish directory: `dist`
+- Required environment variables: `VITE_SUPABASE_URL` and `VITE_SUPABASE_ANON_KEY`
+- Optional environment variable: `VITE_YOUTUBE_API_KEY`
 
+The Render configuration uses an SPA rewrite to `index.html`. Deployment is not performed by the repository CI workflow.
 
-## YouTube discovery
+## Docker production image
 
-Explore can search YouTube videos using the YouTube Data API v3. Create an API key in Google Cloud Console, enable **YouTube Data API v3**, and configure `VITE_YOUTUBE_API_KEY` in `.env.local` for local development and in Render's Static Site environment variables for deployment. The browser app uses this key, so restrict it to the Chatly site referrers and YouTube Data API v3 in Google Cloud. Never use a service-account or other private credential in frontend code.
-
-
-## Docker deployment
-
-Chatly can also be built as a production container. The image uses a Node.js build
-stage and a small Nginx runtime stage; Supabase remains the managed authentication,
-PostgreSQL, storage, and realtime provider.
-
-### Build the image
-
-Pass the public browser configuration as build arguments. These values are embedded
-in the frontend bundle by Vite and are **not secrets**. Never pass a Supabase
-service-role key or other private credential to this build.
+The repository also provides a multi-stage Docker image with a Vite build stage and Nginx runtime. Build with the public frontend configuration:
 
 ```bash
 docker build \
@@ -99,19 +118,26 @@ docker build \
   -t chatly:local .
 ```
 
-### Run locally
+Run locally:
 
 ```bash
 docker run --rm -p 8080:80 chatly:local
 ```
 
-Open http://localhost:8080. The Nginx `/health` endpoint returns `200 ok`.
+Open `http://localhost:8080`. The Nginx `/health` endpoint returns `200 ok`. The container hosts the frontend only; Supabase remains the managed authentication, database, storage, and realtime provider.
 
-### Docker notes
+## Release verification
 
-- `Dockerfile` builds the Vite production bundle and serves it with Nginx.
-- `docker/nginx/default.conf` supports client-side route fallback and static asset caching.
-- `.dockerignore` excludes local dependencies, Git history, environment files, and test output.
-- Values prefixed with `VITE_` are public browser configuration, not server-side secrets.
-- The existing Render Static Site deployment remains unchanged.
-- This container does not run Supabase or PostgreSQL; those remain managed services.
+Before promoting a release, verify:
+
+- [ ] GitHub Actions passes regression tests, the production build, and the Docker image build.
+- [ ] The target environment has the required public Supabase variables.
+- [ ] Required tables, indexes, RPCs, triggers, and migrations exist in the actual Supabase project.
+- [ ] RLS and storage policies are tested with separate accounts and least-privilege access.
+- [ ] Authentication, private profiles, follow requests, feed privacy, likes, comments, and bookmarks work.
+- [ ] Direct/group messaging, replies, delivery/read state, and realtime subscriptions work across separate sessions.
+- [ ] Notifications and unread counts update correctly.
+- [ ] Mobile layouts, keyboard navigation, and reduced-motion behavior are checked in a browser.
+- [ ] No private credentials are exposed in frontend assets or repository files.
+
+A green build confirms compilation and repository regression checks. It does not prove production credentials, database schema, RLS, storage, realtime configuration, or end-to-end behavior are correct.
