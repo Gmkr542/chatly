@@ -19,7 +19,7 @@ test("follow requests preserve existing follows and enforce participant ownershi
   assert.match(migration, /respond_to_follow_request/i);
   assert.match(migration, /toggle_follow/i);
   assert.match(migration, /ON CONFLICT \(follower_id, following_id\) DO NOTHING/i);
-  assert.doesNotMatch(migration, /DROP TABLE|TRUNCATE|DELETE FROM public\\.user_follows\\s*;/i);
+  assert.doesNotMatch(migration, /DROP TABLE|TRUNCATE|DELETE FROM public\.user_follows\s*;/i);
 });
 
 test("private content access is enforced for posts, comments, and likes", () => {
