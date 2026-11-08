@@ -2,6 +2,7 @@ import React, { useEffect, useRef, useState } from "react";
 import { Search, Send, MessageCircle, Users, ArrowLeft, Bookmark, SquarePen, ChevronLeft, Trash2, X, Reply, Copy, Archive, Pin, Bell, BellOff, Pencil, Check } from "lucide-react";
 import { supabase } from "../lib/supabase";
 import { getStoredJSON, setStoredJSON } from "../lib/safeStorage.js";
+import { formatChatTime, formatChatDateTime } from "../lib/timeFormat.js";
 import CreateGroupDialog from "./CreateGroupDialog";
 
 function Avatar({ person, className = "" }) {
@@ -10,17 +11,11 @@ function Avatar({ person, className = "" }) {
 }
 
 function formatMessageTime(value) {
-  const date = new Date(value);
-  if (!value || Number.isNaN(date.getTime())) return "Time unavailable";
-  return date.toLocaleTimeString([], { hour: "numeric", minute: "2-digit" });
+  return formatChatTime(value);
 }
 
 function formatMessageDateTime(value) {
-  const date = new Date(value);
-  return !value || Number.isNaN(date.getTime()) ? "Invalid message timestamp" : date.toLocaleString([], {
-    dateStyle: "medium",
-    timeStyle: "short",
-  });
+  return formatChatDateTime(value);
 }
 
 export default function Chat({ session, profile, targetId, enterToSend = true, onBackToFeed, onOpenProfile }) {
