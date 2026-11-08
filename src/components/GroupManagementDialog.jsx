@@ -1,5 +1,5 @@
 import React, { useCallback, useEffect, useMemo, useState } from "react";
-import { Check, Crown, LoaderCircle, Search, Shield, UserPlus, Users, X, LogOut, UserMinus } from "lucide-react";
+import { Crown, LoaderCircle, Search, Shield, UserPlus, Users, X, LogOut, UserMinus } from "lucide-react";
 import { supabase } from "../lib/supabase";
 import "./GroupManagementDialog.css";
 
