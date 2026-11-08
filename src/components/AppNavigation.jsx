@@ -11,7 +11,7 @@ const destinations = [
 ];
 
 export default function AppNavigation({ activeTab, onNavigate, unreadCount = 0 }) {
-  const selectedTab = activeTab === "public-profile" ? "profile" : activeTab;
+  const selectedTab = ["public-profile", "history", "settings"].includes(activeTab) ? "profile" : activeTab;
 
   return (
     <nav className="chatly-primary-nav" aria-label="Main navigation">
