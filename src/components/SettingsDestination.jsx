@@ -1,6 +1,7 @@
 import { useEffect, useState } from "react";
 import { ArrowLeft, UserRound, ShieldCheck, Bell, Palette, MessageCircle, CircleHelp, Info, LogOut, Trash2, ChevronRight, Sun, Moon, Monitor, Type, KeyRound, Mail, UserCog, Check } from "lucide-react";
 import "./SettingsDestination.css";
+import { SETTINGS_PREFERENCE_DEFAULTS, normalizeSettingsPreferences, updateSettingsPreference } from "../lib/settingsPreferences.js";
 
 const groups = [
   { label: "YOUR ACCOUNT", items: [{ id: "account", title: "Account", detail: "Personal information and sign-in", Icon: UserRound }] },
@@ -59,9 +60,9 @@ export default function SettingsDestination({ onBack = () => {}, onSubpageChange
   const [message, setMessage] = useState("");
   useEffect(() => { if (!logoutOpen && !resetDialog) return undefined; const onKeyDown = event => { if (event.key === "Escape") { if (logoutOpen) { setLogoutOpen(false); setLogoutError(""); } if (resetDialog) setResetDialog(""); } }; window.addEventListener("keydown", onKeyDown); return () => window.removeEventListener("keydown", onKeyDown); }, [logoutOpen, resetDialog]);
   const title = groups.flatMap(group => group.items).find(item => item.id === view)?.title || "Settings";
-  const preferenceDefaults = { readReceipts: true, privateProfile: false, messageRequests: true, messageAlerts: true, activityAlerts: true, likesAlerts: true, commentAlerts: true, mentionAlerts: true, enterToSend: false, mediaPreview: true, autoDownloadMedia: true };
-  const safePrefs = { ...preferenceDefaults, ...(chatPrefs || {}) };
-  const pref = (key, value) => setChatPrefs(current => ({ ...preferenceDefaults, ...(current || {}), [key]: value }));
+  const preferenceDefaults = SETTINGS_PREFERENCE_DEFAULTS;
+  const safePrefs = normalizeSettingsPreferences(chatPrefs);
+  const pref = (key, value) => setChatPrefs(current => updateSettingsPreference(current, key, value));
   const back = () => { if (view !== "home") window.history.back(); };
 
   useEffect(() => {
