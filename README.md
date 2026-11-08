@@ -85,11 +85,11 @@ This inventory describes the codebase; actual production availability also depen
 ## Supabase migration safety
 
 - `supabase/schema.sql` is a bootstrap schema, not a verified snapshot of the current production database. Existing deployments must be checked before applying it.
-- Apply only migrations that are not already present in the target database's migration history. Test changes against a staging project before production.
+- Apply only migrations that are not already present in the target database's migration history, in ascending filename order, after checking their dependencies. Test changes against a staging project before production.
 - **Migration-version warning:** the current migration directory contains duplicate timestamp/version prefixes across multiple files. Reconcile these filenames with the actual Supabase migration history before using CLI migration commands or renaming any migration. Do not blindly rename, reorder, or replay migrations that may already have been applied.
 - When using the SQL Editor, inspect each migration's dependencies and apply only the required unapplied SQL in a controlled order.
 - Never delete production tables, data, RLS policies, triggers, RPCs, or storage policies as routine cleanup.
-- The frontend build and source-level tests do not execute migrations or verify live database state, production RLS policies, realtime publication settings, or storage permissions.
+- The frontend build does not execute SQL migrations or verify live Row Level Security policies. Source-level tests also do not verify live database state, realtime publication settings, or storage permissions.
 
 ## Environment and secrets
 
