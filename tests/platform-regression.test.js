@@ -111,3 +111,36 @@ test("post-view SECURITY DEFINER RPCs use an empty search_path and authenticated
   assert.ok(sql.toLowerCase().includes("revoke all on function public.get_post_view_counts(bigint[]) from public, anon"));
   assert.ok(sql.toLowerCase().includes("grant execute on function public.get_post_view_counts(bigint[]) to authenticated"));
 });
+
+test("group management UI uses the secured membership RPC and respects role boundaries", async () => {
+  const [dialog, chat, rpc] = await Promise.all([
+    read("../src/components/GroupManagementDialog.jsx"),
+    read("../src/components/Chat.jsx"),
+    read("../supabase/migrations/202610260003_group_membership_management.sql")
+  ]);
+  assert.ok(dialog.includes('supabase.rpc("manage_group_member"'));
+  assert.ok(dialog.includes("p_conversation_id: group.id"));
+  assert.ok(dialog.includes("p_action: action"));
+  assert.ok(dialog.includes('currentRole === "owner" || currentRole === "admin"'));
+  assert.ok(dialog.includes("Transfer ownership before leaving this group"));
+  assert.ok(rpc.includes("Only the group owner can change member roles"));
+  assert.ok(rpc.includes("Only group admins can add members"));
+  assert.ok(rpc.includes("The owner must transfer ownership before leaving"));
+  assert.ok(chat.includes("activeConversationKey ="));
+  assert.ok(chat.includes("GroupManagementDialog group={active}"));
+  assert.ok(chat.includes("conversation-group-details"));
+});
+
+test("group management dialog exposes accessible member controls and responsive styles", async () => {
+  const [dialog, styles] = await Promise.all([
+    read("../src/components/GroupManagementDialog.jsx"),
+    read("../src/components/GroupManagementDialog.css")
+  ]);
+  assert.ok(dialog.includes('role="dialog"'));
+  assert.ok(dialog.includes('aria-modal="true"'));
+  assert.ok(dialog.includes('aria-labelledby="group-management-title"'));
+  assert.ok(dialog.includes('aria-label="Find a group member"'));
+  assert.ok(dialog.includes('aria-label="Search people to add"'));
+  assert.ok(styles.includes("@media (max-width: 560px)"));
+  assert.ok(styles.includes("max-height: min(88dvh, 760px)"));
+});
