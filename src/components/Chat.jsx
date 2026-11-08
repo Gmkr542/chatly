@@ -1,5 +1,5 @@
 import React, { useEffect, useRef, useState } from "react";
-import { Search, Send, MessageCircle, Users, ArrowLeft, Bookmark, SquarePen, ChevronLeft, Trash2, X, Reply, Copy, Archive, Pin, Bell, BellOff, Pencil, Check } from "lucide-react";
+import { Search, Send, MessageCircle, Users, ArrowLeft, SquarePen, ChevronLeft, Trash2, X, Reply, Copy, Archive, Pin, Bell, BellOff, Pencil, Check } from "lucide-react";
 import { supabase } from "../lib/supabase";
 import { getStoredJSON, setStoredJSON } from "../lib/safeStorage.js";
 import CreateGroupDialog from "./CreateGroupDialog";

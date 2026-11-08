@@ -1,6 +1,6 @@
 import { useEffect, useRef, useState } from "react";
 import { createPortal } from "react-dom";
-import { MessageCircle, LogOut, UserRound, MessagesSquare, Settings, X, Camera, Save, KeyRound, Search, Bell, Heart, Users, MoreHorizontal, Grid3X3, Minimize2, Maximize2, ArrowLeft } from "lucide-react";
+import { MessageCircle, LogOut, UserRound, Settings, X, Camera, Save, Search, Bell, Heart, MoreHorizontal, Grid3X3, Minimize2, Maximize2, ArrowLeft } from "lucide-react";
 import { supabase } from "./lib/supabase";
 import { getStoredValue, getStoredJSON, setStoredValue, setStoredJSON } from "./lib/safeStorage.js";
 import Auth from "./components/Auth.jsx";
