@@ -91,6 +91,7 @@ GRANT EXECUTE ON FUNCTION public.can_view_profile_content(uuid) TO authenticated
 -- Private accounts must be followed through the request RPC below.
 DROP POLICY IF EXISTS "Users can follow as themselves" ON public.user_follows;
 DROP POLICY IF EXISTS "Users can follow from their own account" ON public.user_follows;
+DROP POLICY IF EXISTS "Users can follow public profiles" ON public.user_follows;
 CREATE POLICY "Users can follow public profiles"
   ON public.user_follows
   FOR INSERT TO authenticated
@@ -215,6 +216,7 @@ GRANT EXECUTE ON FUNCTION public.respond_to_follow_request(uuid, boolean) TO aut
 
 -- Apply the same visibility rule to posts and all post-level interactions.
 DROP POLICY IF EXISTS "Authenticated users can read posts" ON public.posts;
+DROP POLICY IF EXISTS "Viewers can read visible posts" ON public.posts;
 CREATE POLICY "Viewers can read visible posts"
   ON public.posts
   FOR SELECT TO authenticated
@@ -222,6 +224,7 @@ CREATE POLICY "Viewers can read visible posts"
 
 DROP POLICY IF EXISTS "Authenticated users can read comments" ON public.post_comments;
 DROP POLICY IF EXISTS "Authenticated users can read post comments" ON public.post_comments;
+DROP POLICY IF EXISTS "Viewers can read comments on visible posts" ON public.post_comments;
 CREATE POLICY "Viewers can read comments on visible posts"
   ON public.post_comments
   FOR SELECT TO authenticated
@@ -236,6 +239,7 @@ CREATE POLICY "Viewers can read comments on visible posts"
 
 DROP POLICY IF EXISTS "Users can add their own comments" ON public.post_comments;
 DROP POLICY IF EXISTS "Users can create their own post comments" ON public.post_comments;
+DROP POLICY IF EXISTS "Users can comment on visible posts" ON public.post_comments;
 CREATE POLICY "Users can comment on visible posts"
   ON public.post_comments
   FOR INSERT TO authenticated
@@ -250,6 +254,7 @@ CREATE POLICY "Users can comment on visible posts"
   );
 
 DROP POLICY IF EXISTS "Authenticated users can read post likes" ON public.post_likes;
+DROP POLICY IF EXISTS "Viewers can read likes on visible posts" ON public.post_likes;
 CREATE POLICY "Viewers can read likes on visible posts"
   ON public.post_likes
   FOR SELECT TO authenticated
@@ -263,6 +268,7 @@ CREATE POLICY "Viewers can read likes on visible posts"
   );
 
 DROP POLICY IF EXISTS "Users can like as themselves" ON public.post_likes;
+DROP POLICY IF EXISTS "Users can like visible posts as themselves" ON public.post_likes;
 CREATE POLICY "Users can like visible posts as themselves"
   ON public.post_likes
   FOR INSERT TO authenticated
@@ -280,6 +286,7 @@ CREATE POLICY "Users can like visible posts as themselves"
 -- Post views are also tied to post visibility so callers cannot probe private
 -- post view counts or create views for content they cannot access.
 DROP POLICY IF EXISTS "Users can record their own post views" ON public.post_views;
+DROP POLICY IF EXISTS "Users can record their own visible post views" ON public.post_views;
 CREATE POLICY "Users can record their own visible post views"
   ON public.post_views
   FOR INSERT TO authenticated
