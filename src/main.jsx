@@ -13,6 +13,7 @@ import "./auth-polish.css";
 import "./design-tokens.css";
 import "./app-shell-2026.css";
 import "./feed-chat-2026.css";
+import "./destinations-2026.css";
 
 createRoot(document.getElementById("root")).render(
   <React.StrictMode>
