@@ -35,8 +35,8 @@ test("settings Manage opens the dedicated Account Center destination", () => {
 });
 
 test("account profile and sign-in options navigate to separate destinations", () => {
-  assert.match(settings, /setView\("email"\)/);
-  assert.match(settings, /setView\("password"\)/);
+  assert.match(settings, /navigateTo\\("email"\\)/);
+  assert.match(settings, /navigateTo\\("password"\\)/);
   assert.match(settings, /if \(view === "email"\)/);
   assert.match(settings, /if \(view === "password"\)/);
 });
@@ -45,12 +45,12 @@ test("Account Center is the single account destination from settings home", () =
   assert.match(settings, /id: "profile", title: "Account Center"/);
   assert.match(settings, /if \(view === "profile"\)/);
   assert.doesNotMatch(settings, /if \(view === "account"\)/);
-  assert.match(settings, /setView\("profile"\)/);
+  assert.match(settings, /navigateTo\\("profile"\\)/);
 });
 
 test("Account Center retains sign-in, logout, and account management actions", () => {
-  assert.match(settings, /setView\("email"\)/);
-  assert.match(settings, /setView\("password"\)/);
+  assert.match(settings, /navigateTo\\("email"\\)/);
+  assert.match(settings, /navigateTo\\("password"\\)/);
   assert.match(settings, /setLogoutOpen\(true\)/);
   assert.match(settings, /Delete account/);
 });
@@ -73,4 +73,8 @@ test("nested settings destinations use the shared navigation function", () => {
   assert.match(settings, /navigateTo\("password"\)/);
   assert.match(settings, /navigateTo\("profile"\)/);
   assert.match(settings, /navigateTo\(id\)/);
+});
+
+test("browser back consumes its history marker before checking the home destination", () => {
+  assert.ok(settings.indexOf("if (skipHistoryPush.current)") < settings.indexOf("if (view === \"home\")"));
 });
