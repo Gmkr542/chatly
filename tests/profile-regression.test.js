@@ -60,3 +60,17 @@ test("profile editor opens as a full-screen Account Center destination", () => {
   assert.match(app, /height: "100dvh", maxHeight: "100dvh"/);
   assert.match(app, /aria-label="Back to Account Center"/);
 });
+
+test("settings navigation remembers parent destinations for browser back", () => {
+  assert.match(settings, /const viewHistory = useRef\(\[\]\)/);
+  assert.match(settings, /viewHistory\.current = \[\.\.\.viewHistory\.current, view\]/);
+  assert.match(settings, /viewHistory\.current\.pop\(\) \|\| "home"/);
+  assert.match(settings, /skipHistoryPush\.current = true/);
+});
+
+test("nested settings destinations use the shared navigation function", () => {
+  assert.match(settings, /navigateTo\("email"\)/);
+  assert.match(settings, /navigateTo\("password"\)/);
+  assert.match(settings, /navigateTo\("profile"\)/);
+  assert.match(settings, /navigateTo\(id\)/);
+});
