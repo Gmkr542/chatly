@@ -26,3 +26,16 @@ test("account email settings use a correctly escaped email validation pattern", 
   assert.ok(settings.includes(String.raw`/^[^\s@]+@[^\s@]+\.[^\s@]+$/`));
   assert.ok(!settings.includes(String.raw`/^[^\\s@]+@[^\\s@]+\\.[^\\s@]+$/`));
 });
+
+test("settings Manage opens the dedicated Account Center destination", () => {
+  assert.match(settings, /aria-label="Open Account Center"/);
+  assert.match(settings, /if \(view === "profile"\)/);
+  assert.match(settings, /"profile":"Account Center"/);
+});
+
+test("account profile and sign-in options navigate to separate destinations", () => {
+  assert.match(settings, /setView\("email"\)/);
+  assert.match(settings, /setView\("password"\)/);
+  assert.match(settings, /if \(view === "email"\)/);
+  assert.match(settings, /if \(view === "password"\)/);
+});
