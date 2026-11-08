@@ -24,6 +24,7 @@ export default function SettingsDestination({ onBack = () => {}, onSubpageChange
   const [view, setView] = useState("home");
   const [settingsQuery, setSettingsQuery] = useState("");
   const [serverPrivateProfile, setServerPrivateProfile] = useState(false);
+  const [privacyDraft, setPrivacyDraft] = useState(false);
   const [privacyLoading, setPrivacyLoading] = useState(false);
   const [privacySaving, setPrivacySaving] = useState(false);
   const [privacyMessage, setPrivacyMessage] = useState("");
@@ -84,6 +85,7 @@ export default function SettingsDestination({ onBack = () => {}, onSubpageChange
         if (!active) return;
         const people = new Map((peopleResult.data || []).map(person => [person.id, person]));
         setServerPrivateProfile(!!profileResult.data?.is_private);
+        setPrivacyDraft(!!profileResult.data?.is_private);
         setIncomingFollowRequests((requestResult.data || []).map(request => ({
           ...request,
           person: people.get(request.requester_id) || { id: request.requester_id, display_name: "Chatly member" }
@@ -111,6 +113,7 @@ export default function SettingsDestination({ onBack = () => {}, onSubpageChange
         .single();
       if (error) throw error;
       setServerPrivateProfile(!!data.is_private);
+      setPrivacyDraft(!!data.is_private);
       setPrivacyMessage(data.is_private ? "Private profile enabled. Only approved followers can view your posts." : "Your profile is public. Anyone signed in can view your posts.");
     } catch (error) {
       setPrivacyMessage(error?.message || "Could not update account privacy.");
@@ -156,7 +159,8 @@ export default function SettingsDestination({ onBack = () => {}, onSubpageChange
     if (view === "privacy") return <>
       <section className="st-card">
         <h2>ACCOUNT PRIVACY</h2>
-        <Toggle title="Private profile" detail="Only approved followers can view your posts, comments and likes." checked={serverPrivateProfile} disabled={privacyLoading || privacySaving} onChange={updateServerPrivacy}/>
+        <Toggle title="Private profile" detail="Only approved followers can view your posts, comments and likes." checked={privacyDraft} disabled={privacyLoading || privacySaving} onChange={setPrivacyDraft}/>
+        <div className="st-privacy-save-row"><button type="button" className="st-privacy-save" disabled={privacyLoading || privacySaving || privacyDraft === serverPrivateProfile} onClick={() => updateServerPrivacy(privacyDraft)}>{privacySaving ? "Saving…" : "Save privacy settings"}</button>{privacyDraft !== serverPrivateProfile && <span>Unsaved change</span>}</div>
         {privacyLoading && <p className="st-note" role="status">Loading privacy settings…</p>}
         {privacySaving && <p className="st-note" role="status">Saving privacy setting…</p>}
         <p className="st-note">Public accounts remain discoverable. Existing followers are preserved when you switch to private.</p>
