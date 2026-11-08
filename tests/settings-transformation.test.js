@@ -22,7 +22,7 @@ test("settings destinations expose notification, chat and appearance controls", 
   for (const label of ["COMMUNITY ACTIVITY", "COMPOSING MESSAGES", "TEXT & PREVIEW", "Restore default appearance"]) {
     assert.ok(component.includes(label), `Missing settings control: ${label}`);
   }
-  assert.match(component, /setStoredJSON\("chatly-chat-prefs"/);
+  assert.match(component, /const pref = \(key, value\) => setChatPrefs\(current =>/);
 });
 
 test("dialogs can be dismissed with Escape and explicit buttons", () => {
