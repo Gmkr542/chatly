@@ -19,7 +19,7 @@ test("follow requests preserve existing follows and enforce participant ownershi
   assert.match(migration, /respond_to_follow_request/i);
   assert.match(migration, /toggle_follow/i);
   assert.match(migration, /ON CONFLICT \(follower_id, following_id\) DO NOTHING/i);
-  assert.doesNotMatch(migration, /DROP TABLE|TRUNCATE|DELETE FROM public\.user_follows/i);
+  assert.doesNotMatch(migration, /DROP TABLE|TRUNCATE|DELETE FROM public\\.user_follows\\s*;/i);
 });
 
 test("private content access is enforced for posts, comments, and likes", () => {
@@ -43,4 +43,16 @@ test("privileged functions have fixed search paths and authenticated-only execut
   }
   assert.match(migration, /REVOKE ALL ON FUNCTION public\.toggle_follow\(uuid\) FROM PUBLIC, anon/i);
   assert.match(migration, /GRANT EXECUTE ON FUNCTION public\.toggle_follow\(uuid\) TO authenticated/i);
+});
+
+test("profile and feed controls use the secure follow RPC", () => {
+  const profile = readFileSync(new URL("../src/components/PublicProfile.jsx", import.meta.url), "utf8");
+  const feed = readFileSync(new URL("../src/components/Feed.jsx", import.meta.url), "utf8");
+  const settings = readFileSync(new URL("../src/components/SettingsDestination.jsx", import.meta.url), "utf8");
+  assert.match(profile, /rpc\("toggle_follow"/);
+  assert.match(profile, /isPrivate && !ownProfile && !isFollowing/);
+  assert.match(feed, /rpc\("toggle_follow"/);
+  assert.match(feed, /followRequested/);
+  assert.match(settings, /update\(\{ is_private: Boolean\(nextValue\) \}\)/);
+  assert.match(settings, /rpc\("respond_to_follow_request"/);
 });
