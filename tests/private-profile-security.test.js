@@ -54,5 +54,8 @@ test("profile and feed controls use the secure follow RPC", () => {
   assert.match(feed, /rpc\("toggle_follow"/);
   assert.match(feed, /followRequested/);
   assert.match(settings, /update\(\{ is_private: Boolean\(nextValue\) \}\)/);
+  assert.match(settings, /Save privacy settings/);
+  assert.match(settings, /privacyDraft === serverPrivateProfile/);
+  assert.match(settings, /setPrivacyDraft\(!!data\.is_private\)/);
   assert.match(settings, /rpc\("respond_to_follow_request"/);
 });
