@@ -202,7 +202,7 @@
 }
 .st-danger { color:#c34455; }
 .st-unavailable { color:var(--muted); cursor:default; }
-.st-unavailable:hover { background:transparent!important; }
+.st-card .st-unavailable:hover { background:transparent; }
 .st-unavailable-label {
   flex:0 0 auto; padding:4px 7px; border:1px solid var(--border);
   border-radius:7px; color:var(--muted); font-size:10px; font-weight:650; white-space:nowrap;
@@ -259,6 +259,6 @@
 }
 @media (prefers-reduced-motion:reduce) {
   .st-settings *, .st-settings *::before, .st-settings *::after {
-    scroll-behavior:auto!important; transition:none!important; animation:none!important;
+    scroll-behavior:auto; transition:none; animation:none;
   }
 }
