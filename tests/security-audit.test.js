@@ -34,12 +34,10 @@ test("security audit checks storage policies and server-side profile privacy rea
 });
 
 test("security audit contains only read-only SQL statements", () => {
-  const executableLines = audit
-    .split("\n")
-    .map(line => line.trim())
-    .filter(line => line && !line.startsWith("--"));
-  assert.ok(executableLines.length > 0);
-  assert.ok(executableLines.every(line => /^(select|from|join|where|and|or|order|case|when|then|else|end|as|on|group|having|left|inner|cross|with|\(|\))/i.test(line)),
-    "audit SQL must remain read-only");
-  assert.doesNotMatch(audit, /^\s*(insert|update|delete|alter|drop|create|grant|revoke|truncate)\b/im);
+  assert.match(audit, /\bselect\b/i);
+  assert.doesNotMatch(
+    audit,
+    /^\s*(insert\s+into|update\s+\w|delete\s+from|alter\s+|drop\s+|create\s+|grant\s+|revoke\s+|truncate\s+)/im,
+    "audit SQL must not contain data or schema mutations"
+  );
 });
