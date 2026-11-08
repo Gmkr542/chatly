@@ -276,3 +276,24 @@
   font-size:13px; font-weight:700; cursor:pointer;
 }
 .st-privacy-save:disabled { opacity:.48; cursor:not-allowed; }
+
+/* Settings discovery and destination hierarchy */
+.st-search-count {
+  min-height:16px; margin:-12px 2px 12px;
+  color:var(--muted); font-size:11px; line-height:1.4;
+}
+.st-nav-row { transition:background .16s ease, transform .16s ease; }
+.st-nav-row:active { transform:scale(.995); }
+.st-nav-copy strong { letter-spacing:-.01em; }
+.st-group > h2 { padding:0 2px; }
+.st-subheader { position:relative; }
+.st-subheader h1 { line-height:1.18; }
+.st-intro { padding-top:7px; }
+.st-intro > p { max-width:560px; }
+@media (max-width:600px) {
+  .st-search-count { margin-top:-9px; margin-bottom:10px; }
+  .st-nav-row { min-height:66px; }
+}
+@media (prefers-reduced-motion:reduce) {
+  .st-nav-row { transition:none; }
+}
