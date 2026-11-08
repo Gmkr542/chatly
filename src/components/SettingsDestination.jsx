@@ -40,11 +40,11 @@ export default function SettingsDestination({ onBack = () => {}, onSubpageChange
   const [incomingFollowRequests, setIncomingFollowRequests] = useState([]);
   const [followRequestBusy, setFollowRequestBusy] = useState("");
   useEffect(() => {
-    if (view === "home") return undefined;
     if (skipHistoryPush.current) {
       skipHistoryPush.current = false;
       return undefined;
     }
+    if (view === "home") return undefined;
     window.history.pushState({ chatlySettingsSubpage: view }, "");
     const handlePopState = () => {
       const previous = viewHistory.current.pop() || "home";
