@@ -1,0 +1,200 @@
+.group-management-backdrop {
+  position: fixed;
+  inset: 0;
+  z-index: 1200;
+  display: grid;
+  place-items: center;
+  padding: 18px;
+  background: rgb(12 16 24 / 58%);
+  backdrop-filter: blur(5px);
+}
+.group-management-dialog {
+  width: min(100%, 540px);
+  max-height: min(88dvh, 760px);
+  display: flex;
+  flex-direction: column;
+  overflow: hidden;
+  color: var(--text-primary, #20242c);
+  background: var(--surface, #fff);
+  border: 1px solid var(--border, #e5e7eb);
+  border-radius: 20px;
+  box-shadow: 0 24px 80px rgb(0 0 0 / 24%);
+}
+.group-management-header {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  padding: 20px 20px 16px;
+  border-bottom: 1px solid var(--border, #e5e7eb);
+}
+.group-management-icon {
+  width: 42px;
+  height: 42px;
+  display: grid;
+  flex: 0 0 auto;
+  place-items: center;
+  color: var(--accent, #5b67d8);
+  background: color-mix(in srgb, var(--accent, #5b67d8) 11%, transparent);
+  border-radius: 13px;
+}
+.group-management-header > div { min-width: 0; flex: 1; }
+.group-management-header h2 { margin: 0; font-size: 17px; font-weight: 700; }
+.group-management-header p { margin: 4px 0 0; color: var(--text-secondary, #707782); font-size: 12px; line-height: 1.45; }
+.group-management-header > button,
+.group-management-member-actions button,
+.group-management-candidate > button {
+  display: grid;
+  width: 34px;
+  height: 34px;
+  flex: 0 0 auto;
+  place-items: center;
+  color: var(--text-secondary, #707782);
+  background: transparent;
+  border: 1px solid var(--border, #e5e7eb);
+  border-radius: 10px;
+  cursor: pointer;
+}
+.group-management-dialog button:disabled { opacity: .45; cursor: not-allowed; }
+.group-management-summary {
+  display: flex;
+  justify-content: space-between;
+  gap: 12px;
+  padding: 12px 20px;
+  color: var(--text-secondary, #707782);
+  background: var(--surface-subtle, #f8f9fb);
+  font-size: 12px;
+}
+.group-management-summary strong { color: var(--text-primary, #20242c); }
+.group-management-section { padding: 16px 20px 0; min-height: 0; }
+.group-management-section-title { display: flex; align-items: center; justify-content: space-between; margin-bottom: 10px; }
+.group-management-section-title h3 { margin: 0; font-size: 13px; font-weight: 700; }
+.group-management-section-title > span { color: var(--text-secondary, #707782); font-size: 11px; }
+.group-management-search {
+  min-height: 36px;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 0 10px;
+  color: var(--text-secondary, #707782);
+  background: var(--surface-subtle, #f8f9fb);
+  border: 1px solid var(--border, #e5e7eb);
+  border-radius: 10px;
+}
+.group-management-search input {
+  width: 100%;
+  min-width: 0;
+  color: var(--text-primary, #20242c);
+  background: transparent;
+  border: 0;
+  outline: 0;
+  font: inherit;
+  font-size: 12px;
+}
+.group-management-member-list,
+.group-management-candidates { max-height: 220px; overflow-y: auto; overscroll-behavior: contain; }
+.group-management-member,
+.group-management-candidate {
+  min-height: 54px;
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  border-bottom: 1px solid var(--border-subtle, #eef0f3);
+}
+.group-management-avatar {
+  width: 34px;
+  height: 34px;
+  display: grid;
+  flex: 0 0 auto;
+  place-items: center;
+  overflow: hidden;
+  color: var(--text-secondary, #707782);
+  background: var(--surface-subtle, #f1f3f6);
+  border-radius: 50%;
+  font-size: 12px;
+  font-weight: 700;
+}
+.group-management-avatar img { width: 100%; height: 100%; object-fit: cover; }
+.group-management-member-copy { min-width: 0; flex: 1; display: grid; gap: 2px; }
+.group-management-member-copy strong { overflow: hidden; color: var(--text-primary, #20242c); font-size: 12px; text-overflow: ellipsis; white-space: nowrap; }
+.group-management-member-copy small { color: var(--text-secondary, #707782); font-size: 11px; }
+.group-management-role {
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  padding: 4px 7px;
+  color: var(--text-secondary, #707782);
+  background: var(--surface-subtle, #f5f6f8);
+  border-radius: 7px;
+  font-size: 10px;
+  text-transform: capitalize;
+}
+.group-management-role.role-owner { color: #a36b18; background: #fff5df; }
+.group-management-role.role-admin { color: #5263b7; background: #edf0ff; }
+.group-management-member-actions { display: flex; gap: 5px; }
+.group-management-member-actions button { width: 30px; height: 30px; border-radius: 8px; }
+.group-management-member-actions button:hover,
+.group-management-candidate > button:hover { color: var(--accent, #5b67d8); border-color: var(--accent, #5b67d8); }
+.group-management-leave {
+  display: inline-flex;
+  align-items: center;
+  gap: 5px;
+  padding: 6px 8px;
+  color: #b54747;
+  background: transparent;
+  border: 1px solid var(--border, #e5e7eb);
+  border-radius: 8px;
+  font-size: 11px;
+  cursor: pointer;
+}
+.group-management-add { padding-bottom: 2px; }
+.group-management-candidate > button { width: 30px; height: 30px; border-radius: 8px; }
+.group-management-empty,
+.group-management-loading {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  min-height: 48px;
+  margin: 0;
+  color: var(--text-secondary, #707782);
+  font-size: 11px;
+}
+.group-management-error,
+.group-management-notice,
+.group-management-owner-note {
+  margin: 12px 20px 0;
+  padding: 9px 11px;
+  border-radius: 9px;
+  font-size: 11px;
+  line-height: 1.45;
+}
+.group-management-error { color: #a52c2c; background: #fff0f0; }
+.group-management-notice { color: #247348; background: #eaf8ef; }
+.group-management-owner-note { color: var(--text-secondary, #707782); background: var(--surface-subtle, #f8f9fb); }
+.group-management-footer {
+  display: flex;
+  justify-content: flex-end;
+  padding: 14px 20px 18px;
+  margin-top: auto;
+}
+.group-management-footer button {
+  min-width: 84px;
+  padding: 9px 16px;
+  color: #fff;
+  background: var(--accent, #5b67d8);
+  border: 0;
+  border-radius: 10px;
+  font: inherit;
+  font-size: 12px;
+  font-weight: 650;
+  cursor: pointer;
+}
+@media (max-width: 560px) {
+  .group-management-backdrop { align-items: end; padding: 0; }
+  .group-management-dialog { width: 100%; max-height: 92dvh; border-radius: 20px 20px 0 0; }
+  .group-management-header { padding: 17px 16px 14px; }
+  .group-management-section { padding-left: 16px; padding-right: 16px; }
+  .group-management-summary { padding-left: 16px; padding-right: 16px; }
+  .group-management-error, .group-management-notice, .group-management-owner-note { margin-left: 16px; margin-right: 16px; }
+  .group-management-footer { padding: 12px 16px 20px; }
+}
