@@ -1,0 +1,48 @@
+/* Chatly global navigation — one responsive, accessible destination bar. */
+.chatly-primary-nav {
+  position: fixed;
+  z-index: 1100;
+  left: 50%;
+  bottom: 0;
+  transform: translateX(-50%);
+  display: grid;
+  grid-template-columns: repeat(6, minmax(0, 1fr));
+  width: min(100%, 820px);
+  padding: 7px max(8px, env(safe-area-inset-left)) max(7px, env(safe-area-inset-bottom)) max(8px, env(safe-area-inset-right));
+  border: 1px solid var(--border, var(--chatly-border, #e7e7ed));
+  border-bottom: 0;
+  border-radius: 18px 18px 0 0;
+  background: color-mix(in srgb, var(--surface, #fff) 94%, transparent);
+  box-shadow: 0 -8px 30px rgb(20 20 30 / 8%);
+  backdrop-filter: blur(18px);
+  -webkit-backdrop-filter: blur(18px);
+}
+.chatly-primary-nav-item {
+  position: relative; display: flex; min-width: 0; min-height: 52px;
+  flex-direction: column; align-items: center; justify-content: center;
+  gap: 3px; padding: 5px 2px; border: 0; border-radius: 12px;
+  background: transparent; color: var(--muted, var(--chatly-muted, #858591));
+  cursor: pointer; transition: color .16s ease, background-color .16s ease, transform .16s ease;
+  -webkit-tap-highlight-color: transparent;
+}
+.chatly-primary-nav-item:hover { background: var(--chatly-accent-soft, rgb(101 87 232 / 9%)); color: var(--chatly-accent, #6557e8); }
+.chatly-primary-nav-item.is-active { background: var(--chatly-accent-soft, rgb(101 87 232 / 10%)); color: var(--chatly-accent, #6557e8); }
+.chatly-primary-nav-item:focus-visible { outline: 2px solid var(--chatly-accent, #6557e8); outline-offset: -2px; }
+.chatly-primary-nav-icon { position: relative; display: grid; width: 26px; height: 24px; place-items: center; }
+.chatly-primary-nav-label { max-width: 100%; overflow: hidden; font-size: 10px; font-weight: 650; line-height: 1.2; text-overflow: ellipsis; white-space: nowrap; }
+.chatly-primary-nav-badge {
+  position: absolute; top: -5px; right: -9px; display: grid; min-width: 16px; height: 16px;
+  place-items: center; padding: 0 4px; border: 2px solid var(--surface, #fff);
+  border-radius: 999px; background: #df3f54; color: #fff; font-size: 9px; font-weight: 750; line-height: 1;
+}
+@media (min-width: 1024px) {
+  .chatly-primary-nav { bottom: 18px; width: min(820px, calc(100% - 48px)); padding: 8px; border: 1px solid var(--border, var(--chatly-border, #e7e7ed)); border-radius: 18px; }
+  .chatly-primary-nav-item { min-height: 54px; }
+  .chatly-primary-nav-label { font-size: 11px; }
+}
+@media (max-width: 380px) {
+  .chatly-primary-nav { padding-inline: 4px; }
+  .chatly-primary-nav-item { min-height: 48px; gap: 2px; }
+  .chatly-primary-nav-label { font-size: 9px; }
+}
+@media (prefers-reduced-motion: reduce) { .chatly-primary-nav-item { transition: none; } }
