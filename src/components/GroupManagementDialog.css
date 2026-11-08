@@ -198,3 +198,21 @@
   .group-management-error, .group-management-notice, .group-management-owner-note { margin-left: 16px; margin-right: 16px; }
   .group-management-footer { padding: 12px 16px 20px; }
 }
+
+.conversation-group-details {
+  width: 34px;
+  height: 34px;
+  display: grid;
+  flex: 0 0 auto;
+  place-items: center;
+  margin-left: 4px;
+  color: var(--text-secondary, #707782);
+  background: transparent;
+  border: 1px solid var(--border, #e5e7eb);
+  border-radius: 10px;
+  cursor: pointer;
+}
+.conversation-group-details:hover {
+  color: var(--accent, #5b67d8);
+  border-color: var(--accent, #5b67d8);
+}
