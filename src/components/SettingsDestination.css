@@ -37,7 +37,7 @@
   font-size:25px; font-weight:750; letter-spacing:-.035em; line-height:1.2;
 }
 .st-intro p { margin:8px 0 0 54px; color:var(--muted); font-size:13px; line-height:1.5; }
-.st-search-wrap { display:flex; align-items:center; gap:8px; margin:2px 0 20px; }
+.st-search-wrap { display:flex; align-items:center; gap:8px; margin:2px 0 6px; }
 .st-search { display:block; flex:1; min-width:0; margin:0; }
 .st-search input {
   display:block; width:100%; min-height:46px; padding:10px 14px;
@@ -49,7 +49,7 @@
   min-height:40px; padding:8px 11px; border:1px solid var(--border);
   border-radius:10px; background:var(--surface); color:var(--text); cursor:pointer;
 }
-.st-group { min-width:0; margin:0 0 18px; }
+.st-group { min-width:0; margin:0 0 14px; }
 .st-group > h2,
 .st-card > h2 {
   margin:0 0 9px 2px; color:var(--muted);
@@ -240,8 +240,8 @@
   .st-intro { padding-bottom:14px; }
   .st-intro h1 { font-size:23px; }
   .st-intro p { margin-left:54px; font-size:12px; }
-  .st-search-wrap { margin-bottom:16px; }
-  .st-group { margin-bottom:15px; }
+  .st-search-wrap { margin-bottom:6px; }
+  .st-group { margin-bottom:12px; }
   .st-nav-row { min-height:64px; padding:10px 11px; gap:11px; }
   .st-card { margin-bottom:13px; padding:14px; }
   .st-pref-row { gap:12px; padding:13px 0; }
@@ -279,7 +279,7 @@
 
 /* Settings discovery and destination hierarchy */
 .st-search-count {
-  min-height:16px; margin:-12px 2px 12px;
+  min-height:0; margin:0 2px 6px;
   color:var(--muted); font-size:11px; line-height:1.4;
 }
 .st-nav-row { transition:background .16s ease, transform .16s ease; }

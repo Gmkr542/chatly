@@ -38,3 +38,11 @@ test("settings cards and switches remain responsive and touch friendly", () => {
   assert.match(css, /\.st-privacy-save/);
   assert.match(css, /\.st-appearance-preview/);
 });
+
+
+test("settings search sits close to the first options group", () => {
+  assert.match(component, /className="st-search-count" hidden=\{!settingsQuery\.trim\(\)\}/);
+  assert.match(css, /\.st-search-wrap[^}]*margin:2px 0 6px/);
+  assert.match(css, /\.st-search-count\s*\{\s*min-height:0; margin:0 2px 6px;/);
+  assert.match(css, /@media \(max-width:600px\)[\s\S]*?\.st-search-wrap \{ margin-bottom:6px; \}/);
+});
