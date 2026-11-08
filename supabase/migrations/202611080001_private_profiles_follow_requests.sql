@@ -276,4 +276,73 @@ CREATE POLICY "Users can like visible posts as themselves"
     )
   );
 
+
+-- Post views are also tied to post visibility so callers cannot probe private
+-- post view counts or create views for content they cannot access.
+DROP POLICY IF EXISTS "Users can record their own post views" ON public.post_views;
+CREATE POLICY "Users can record their own visible post views"
+  ON public.post_views
+  FOR INSERT TO authenticated
+  WITH CHECK (
+    user_id = auth.uid()
+    AND EXISTS (
+      SELECT 1
+      FROM public.posts AS parent_post
+      WHERE parent_post.id = post_id
+        AND public.can_view_profile_content(parent_post.user_id)
+    )
+  );
+
+CREATE OR REPLACE FUNCTION public.record_post_view(p_post_id bigint)
+RETURNS boolean
+LANGUAGE plpgsql
+SECURITY DEFINER
+SET search_path = ''
+AS $
+DECLARE
+  inserted_count integer;
+BEGIN
+  IF auth.uid() IS NULL THEN
+    RAISE EXCEPTION 'Authentication required';
+  END IF;
+
+  IF NOT EXISTS (
+    SELECT 1
+    FROM public.posts AS parent_post
+    WHERE parent_post.id = p_post_id
+      AND public.can_view_profile_content(parent_post.user_id)
+  ) THEN
+    RETURN false;
+  END IF;
+
+  INSERT INTO public.post_views (post_id, user_id)
+  VALUES (p_post_id, auth.uid())
+  ON CONFLICT (post_id, user_id) DO NOTHING;
+
+  GET DIAGNOSTICS inserted_count = ROW_COUNT;
+  RETURN inserted_count = 1;
+END;
+$;
+
+CREATE OR REPLACE FUNCTION public.get_post_view_counts(post_ids bigint[])
+RETURNS TABLE(post_id bigint, view_count bigint)
+LANGUAGE sql
+STABLE
+SECURITY DEFINER
+SET search_path = ''
+AS $
+  SELECT view_row.post_id, count(*)::bigint
+  FROM public.post_views AS view_row
+  INNER JOIN public.posts AS parent_post
+    ON parent_post.id = view_row.post_id
+  WHERE view_row.post_id = ANY(post_ids)
+    AND public.can_view_profile_content(parent_post.user_id)
+  GROUP BY view_row.post_id;
+$;
+
+REVOKE ALL ON FUNCTION public.record_post_view(bigint) FROM PUBLIC, anon;
+GRANT EXECUTE ON FUNCTION public.record_post_view(bigint) TO authenticated;
+REVOKE ALL ON FUNCTION public.get_post_view_counts(bigint[]) FROM PUBLIC, anon;
+GRANT EXECUTE ON FUNCTION public.get_post_view_counts(bigint[]) TO authenticated;
+
 NOTIFY pgrst, 'reload schema';
