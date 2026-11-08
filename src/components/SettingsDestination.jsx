@@ -23,11 +23,11 @@ function Toggle({ title, detail, checked, onChange, disabled = false }) {
 
 export default function SettingsDestination({ onBack = () => {}, onSubpageChange = () => {}, theme = "system", setTheme, fontSize, setFontSize, fontFamily, setFontFamily, setNotice, notice, session, accountEmail, setAccountEmail, supabase, password, setPassword, setNewPassword, chatPrefs, setChatPrefs, setEditProfileOpen }) {
   const [view, setView] = useState("home");
-  const [viewHistory, setViewHistory] = useState([]);
+  const viewHistory = useRef([]);
   const skipHistoryPush = useRef(false);
   const navigateTo = nextView => {
     if (!nextView || nextView === view) return;
-    setViewHistory(current => [...current, view]);
+    viewHistory.current = [...viewHistory.current, view];
     setView(nextView);
     onSubpageChange(true);
   };
@@ -47,15 +47,12 @@ export default function SettingsDestination({ onBack = () => {}, onSubpageChange
     }
     window.history.pushState({ chatlySettingsSubpage: view }, "");
     const handlePopState = () => {
-      setViewHistory(current => {
-        const previous = current[current.length - 1] || "home";
-        skipHistoryPush.current = true;
-        setView(previous);
-        onSubpageChange(previous !== "home");
-        setMessage("");
-        setNotice("");
-        return current.slice(0, -1);
-      });
+      const previous = viewHistory.current.pop() || "home";
+      skipHistoryPush.current = true;
+      setView(previous);
+      onSubpageChange(previous !== "home");
+      setMessage("");
+      setNotice("");
     };
     window.addEventListener("popstate", handlePopState);
     return () => window.removeEventListener("popstate", handlePopState);
