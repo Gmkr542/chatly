@@ -1,3 +1,4 @@
+// Regression coverage for the read-only Supabase security audit.
 import test from "node:test";
 import assert from "node:assert/strict";
 import { readFile } from "node:fs/promises";
