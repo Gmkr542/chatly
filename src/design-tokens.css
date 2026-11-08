@@ -44,6 +44,17 @@
   --brand-focus: rgb(103 87 232 / 24%);
   --color-error: #c53e50;
   --color-success: #16845b;
+  --chatly-danger: var(--color-error);
+  --chatly-danger-soft: #fff0f1;
+  --chatly-success: var(--color-success);
+  --chatly-success-soft: #eaf8ef;
+  --chatly-warning: #8a5a10;
+  --chatly-warning-soft: #fff7e7;
+  --chatly-surface-muted: #f4f4f8;
+  --chatly-text-subtle: #9292a6;
+  --chatly-text-strong: #25253a;
+  --chatly-border-strong: #d6d8e5;
+  --chatly-overlay: rgb(20 20 35 / 48%);
 
   --chatly-accent: var(--brand-accent);
   --chatly-accent-hover: var(--brand-accent-hover);
@@ -130,6 +141,14 @@
   --text-primary: var(--text, #202033);
   --text-secondary: var(--muted, #74758a);
   --text-muted: #9292a6;
+  --chatly-surface-muted: #f4f4f8;
+  --chatly-text-subtle: #9292a6;
+  --chatly-text-strong: #25253a;
+  --chatly-border-strong: #d6d8e5;
+  --chatly-danger-soft: #fff0f1;
+  --chatly-success-soft: #eaf8ef;
+  --chatly-warning-soft: #fff7e7;
+  --chatly-overlay: rgb(20 20 35 / 48%);
   --chatly-accent-soft: #f0edff;
   color-scheme: light;
 }
@@ -142,7 +161,15 @@
   --border-strong: #454555;
   --text-primary: var(--text, #f4f4f7);
   --text-secondary: var(--muted, #a5a5b2);
-  --text-muted: #9292a6;
+  --text-muted: #a2a2b5;
+  --chatly-surface-muted: #20202b;
+  --chatly-text-subtle: #a2a2b5;
+  --chatly-text-strong: #f0f0f7;
+  --chatly-border-strong: #454555;
+  --chatly-danger-soft: #3a2028;
+  --chatly-success-soft: #1d3428;
+  --chatly-warning-soft: #3a3020;
+  --chatly-overlay: rgb(0 0 0 / 66%);
   --chatly-accent-soft: rgb(130 116 255 / 16%);
   --chatly-shadow-card: 0 2px 14px rgb(0 0 0 / 18%);
   --chatly-shadow-popover: 0 16px 44px rgb(0 0 0 / 42%);

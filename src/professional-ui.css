@@ -1,21 +1,5 @@
-/* Chatly professional UI layer — imported after the legacy stylesheet.
-   Keep refinements centralized while page styles are migrated in focused follow-ups. */
-:root {
-  --chatly-accent: #6557e8;
-  --chatly-accent-hover: #5546d7;
-  --chatly-accent-soft: #f0edff;
-  --chatly-ink: #20202b;
-  --chatly-muted: #777786;
-  --chatly-surface: #fff;
-  --chatly-canvas: #f7f7fa;
-  --chatly-border: #e8e8ef;
-  --chatly-radius-sm: 10px;
-  --chatly-radius-md: 14px;
-  --chatly-radius-lg: 20px;
-  --chatly-shadow-card: 0 2px 12px rgb(25 25 45 / 4%);
-  --chatly-shadow-popover: 0 16px 44px rgb(25 25 45 / 14%);
-  --chatly-focus: 0 0 0 3px rgb(101 87 232 / 22%);
-}
+/* Chatly professional component refinements.
+   Shared design tokens are owned by src/design-tokens.css. */
 .app-shell {
   color: var(--text, var(--chatly-ink));
   background: var(--app-bg, var(--chatly-canvas));
@@ -614,23 +598,6 @@
 @media (max-width: 520px) { .notification-activity-item { gap: 9px; padding: 13px 11px; border-radius: 12px; } .notification-activity-icon { flex-basis: 29px; width: 29px; height: 29px; } }
 
 
-/* Batch 1.1 — semantic design tokens */
-:root {
-  --chatly-space-1: 4px; --chatly-space-2: 8px; --chatly-space-3: 12px; --chatly-space-4: 16px;
-  --chatly-space-5: 20px; --chatly-space-6: 24px; --chatly-space-8: 32px; --chatly-space-10: 40px;
-  --chatly-font-xs: 11px; --chatly-font-sm: 13px; --chatly-font-md: 15px; --chatly-font-lg: 18px;
-  --chatly-line-tight: 1.25; --chatly-line-normal: 1.5; --chatly-line-relaxed: 1.7;
-  --chatly-control-height: 42px; --chatly-control-height-sm: 36px; --chatly-control-height-lg: 48px;
-  --chatly-radius-pill: 999px; --chatly-radius-control: 12px;
-  --chatly-shadow-raised: 0 8px 24px rgb(25 25 45 / 8%);
-  --chatly-shadow-modal: 0 24px 72px rgb(18 18 32 / 20%);
-  --chatly-danger: #c43d4b; --chatly-danger-soft: #fff0f1;
-  --chatly-success: #247548; --chatly-success-soft: #eaf8ef;
-  --chatly-warning: #8a5a10; --chatly-warning-soft: #fff7e7;
-  --chatly-surface-muted: #f4f4f8; --chatly-surface-raised: #fff;
-  --chatly-text-subtle: #9292a6; --chatly-text-strong: #25253a;
-  --chatly-border-strong: #d7d7e2; --chatly-overlay: rgb(20 20 35 / 48%);
-}
 [data-theme="dark"] {
   --chatly-surface-muted: #20202b; --chatly-surface-raised: #252532;
   --chatly-text-subtle: #a2a2b5; --chatly-text-strong: #f0f0f7;
@@ -1484,12 +1451,6 @@ html { -webkit-text-size-adjust: 100%; }
 }
 
 
-/* Batch 9.1 — shared spacing and surface tokens */
-:root {
-  --chatly-space-1: 4px; --chatly-space-2: 8px; --chatly-space-3: 12px;
-  --chatly-space-4: 16px; --chatly-space-5: 20px; --chatly-space-6: 24px;
-  --chatly-control-height: 40px; --chatly-control-radius: 11px;
-}
 .app-shell :is(.post-card, .profile-summary, .profile-hero, .st-card) {
   border-color: var(--border, var(--chatly-border));
 }
@@ -2151,19 +2112,6 @@ html { -webkit-text-size-adjust: 100%; }
     animation-duration: .01ms !important; transition-duration: .01ms !important;
     scroll-behavior: auto !important;
   }
-}
-
-
-
-/* Batch 17.1 — semantic design tokens */
-:root {
-  --chatly-font-sans: Inter, system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
-  --chatly-space-1: 4px; --chatly-space-2: 8px; --chatly-space-3: 12px;
-  --chatly-space-4: 16px; --chatly-space-5: 20px; --chatly-space-6: 24px;
-  --chatly-space-8: 32px; --chatly-space-10: 40px; --chatly-space-12: 48px;
-  --chatly-control-height: 42px; --chatly-control-height-compact: 36px;
-  --chatly-radius-pill: 999px; --chatly-shadow-raised: 0 8px 28px rgb(20 20 40 / 9%);
-  --chatly-layer-header: 15; --chatly-layer-menu: 30; --chatly-layer-modal: 50;
 }
 
 
