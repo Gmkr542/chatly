@@ -307,3 +307,38 @@
 .st-appearance-preview.family-serif { font-family:Georgia,serif; }
 .st-appearance-preview.family-sans { font-family:Arial,sans-serif; }
 .st-appearance-preview.family-system { font-family:inherit; }
+
+/* Settings 3.0 — account context and accessible search */
+.st-account-summary {
+  display:flex; align-items:center; gap:11px; min-width:0;
+  margin:0 0 13px; padding:12px;
+  border:1px solid var(--border); border-radius:14px;
+  background:var(--surface);
+}
+.st-account-avatar {
+  display:grid; place-items:center; flex:0 0 40px; width:40px; height:40px;
+  border-radius:50%; background:color-mix(in srgb,var(--chatly-brand,#7566e8) 13%,var(--surface));
+  color:var(--chatly-brand,#7566e8); font-size:16px; font-weight:750;
+}
+.st-account-copy { display:grid; gap:3px; flex:1; min-width:0; }
+.st-account-copy strong { overflow:hidden; color:var(--text); font-size:13px; text-overflow:ellipsis; white-space:nowrap; }
+.st-account-copy small { overflow:hidden; color:var(--muted); font-size:11px; text-overflow:ellipsis; white-space:nowrap; }
+.st-account-summary > button {
+  display:flex; align-items:center; gap:3px; flex:none;
+  min-height:36px; padding:7px 8px; border:1px solid var(--border);
+  border-radius:9px; background:var(--app-bg); color:var(--text);
+  font-size:11px; font-weight:650; cursor:pointer;
+}
+.st-account-summary > button svg { width:14px; height:14px; }
+.st-search { position:relative; }
+.st-search > svg {
+  position:absolute; top:50%; left:13px; width:17px; height:17px;
+  color:var(--muted); pointer-events:none; transform:translateY(-50%);
+}
+.st-search input { padding-left:39px; }
+.st-search-clear { display:flex; align-items:center; gap:5px; }
+.st-search-clear svg { width:14px; height:14px; }
+@media (max-width:360px) {
+  .st-account-summary { gap:8px; padding:10px; }
+  .st-account-summary > button { padding:6px; }
+}
