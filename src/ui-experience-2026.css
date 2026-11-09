@@ -1,0 +1,173 @@
+/* Chatly 2026 — cross-destination experience polish.
+   Additive visual layer only: no DOM, navigation, data, or API changes.
+   Feed discovery/filter spacing is intentionally owned by ui-layout-refinement-2026.css. */
+
+.app-shell {
+  font-family: var(--font-sans, Inter, system-ui, sans-serif);
+  -webkit-font-smoothing: antialiased;
+  text-rendering: optimizeLegibility;
+}
+
+.app-shell :where(button, input, textarea, select) { font: inherit; }
+.app-shell :where(button, a, input, textarea, select):focus-visible {
+  outline: 2px solid var(--brand-accent, #6757e8);
+  outline-offset: 3px;
+}
+.app-shell :where(button, a) { -webkit-tap-highlight-color: transparent; }
+.app-shell .app-main-column { background: var(--bg-primary); color: var(--text-primary); }
+.app-shell .app-main-column > .topbar {
+  min-height: 58px;
+  padding-inline: clamp(14px, 2.5vw, 22px);
+  backdrop-filter: saturate(1.4) blur(18px);
+  -webkit-backdrop-filter: saturate(1.4) blur(18px);
+}
+.app-shell .topbar .brand { letter-spacing: -.055em; font-weight: 800; }
+.app-shell .topbar .global-notification-trigger,
+.app-shell .topbar .global-profile-trigger { min-width: 44px; min-height: 44px; border-radius: 13px; }
+
+.app-shell .chatly-primary-nav {
+  border-color: color-mix(in srgb, var(--border-subtle, #e5e5ed) 88%, transparent);
+  background: color-mix(in srgb, var(--bg-surface, #fff) 92%, transparent);
+  box-shadow: 0 -8px 28px rgb(20 20 35 / 7%);
+}
+.app-shell .chatly-primary-nav-item { min-height: 52px; border-radius: 13px; }
+.app-shell .chatly-primary-nav-item.is-active { background: var(--chatly-accent-soft, rgb(103 87 232 / 10%)); }
+.app-shell .chatly-primary-nav-item.is-active .chatly-primary-nav-icon { transform: translateY(-1px); }
+.app-shell .global-profile-drawer {
+  border-color: var(--border-subtle);
+  background: var(--bg-surface-elevated);
+  box-shadow: var(--chatly-shadow-popover);
+}
+
+.app-shell .feed-page .post-card {
+  border: 1px solid var(--border-subtle);
+  border-radius: 17px;
+  background: var(--bg-surface);
+  box-shadow: var(--chatly-shadow-card);
+}
+.app-shell .feed-page .post-author-profile,
+.app-shell .feed-page .post-options-trigger,
+.app-shell .feed-page .post-actions-primary button {
+  transition: background-color 150ms ease, color 150ms ease, transform 150ms ease;
+}
+.app-shell .feed-page .post-author-profile:focus-visible,
+.app-shell .feed-page .post-options-trigger:focus-visible,
+.app-shell .feed-page .post-actions-primary button:focus-visible { outline-offset: 2px; }
+.app-shell .feed-page .post-body { color: var(--text-primary); line-height: 1.58; overflow-wrap: anywhere; }
+.app-shell .feed-page .post-engagement-meta { color: var(--text-muted); font-variant-numeric: tabular-nums; }
+.app-shell .feed-page .floating-create {
+  box-shadow: 0 8px 24px color-mix(in srgb, var(--brand-accent) 28%, transparent);
+  transition: transform 160ms ease, box-shadow 160ms ease;
+}
+.app-shell .feed-page .floating-create:active { transform: scale(.96); }
+
+.app-shell .chat-layout .conversation { background: var(--bg-primary); }
+.app-shell .chat-layout .conversation-header {
+  border-bottom-color: var(--border-subtle);
+  background: color-mix(in srgb, var(--bg-surface) 94%, transparent);
+  backdrop-filter: blur(14px);
+}
+.app-shell .chat-layout .message-list {
+  scrollbar-width: thin;
+  scrollbar-color: var(--border-strong) transparent;
+}
+.app-shell .chat-layout .message .bubble { box-shadow: 0 1px 2px rgb(20 20 35 / 5%); overflow-wrap: anywhere; }
+.app-shell .chat-layout .message.mine .bubble {
+  box-shadow: 0 3px 10px color-mix(in srgb, var(--brand-accent) 15%, transparent);
+}
+.app-shell .chat-layout .composer {
+  border-top-color: var(--border-subtle);
+  background: color-mix(in srgb, var(--bg-surface) 96%, transparent);
+  backdrop-filter: blur(14px);
+}
+.app-shell .chat-layout .composer textarea {
+  border-color: var(--border-subtle);
+  background: var(--bg-primary);
+  color: var(--text-primary);
+}
+
+.app-shell .explore-destination-page .explore-category-card,
+.app-shell .explore-destination-page .explore-home-post,
+.app-shell .dedicated-search-page .search-post,
+.app-shell .dedicated-search-page .search-person {
+  border-color: var(--border-subtle);
+  transition: border-color 160ms ease, background-color 160ms ease, box-shadow 160ms ease, transform 160ms ease;
+}
+.app-shell .explore-destination-page .explore-category-card { box-shadow: var(--chatly-shadow-card); }
+.app-shell .explore-destination-page .explore-category-card:active { transform: scale(.985); }
+.app-shell .dedicated-search-page .search-page-input {
+  border-color: var(--border-subtle);
+  background: var(--bg-surface);
+  box-shadow: var(--chatly-shadow-sm);
+}
+.app-shell .dedicated-search-page .search-page-input input { color: var(--text-primary); }
+
+.app-shell .notification-destination-page .notification-activity-list > * { border-color: var(--border-subtle); }
+.app-shell .notification-destination-page .notification-activity-list > *:focus-within { background: var(--chatly-accent-soft); }
+.app-shell .notification-destination-page .notification-filter-row button { min-height: 40px; border-radius: 999px; }
+.app-shell .app-settings-destination-page .st-nav-card,
+.app-shell .app-settings-destination-page .st-card { box-shadow: var(--chatly-shadow-card); }
+.app-shell .app-settings-destination-page .st-nav-row,
+.app-shell .app-settings-destination-page .st-detail-row {
+  transition: background-color 150ms ease, border-color 150ms ease;
+}
+.app-shell .profile-page .profile-summary,
+.app-shell .public-profile-page .profile-hero { border-color: var(--border-subtle); }
+.app-shell .profile-page .profile-post-tile,
+.app-shell .public-profile-page .profile-post {
+  background: var(--bg-surface);
+  border-color: var(--border-subtle);
+}
+
+.app-shell :where(.compose-modal, .st-dialog, .comments-modal, .report-post-modal) {
+  border: 1px solid var(--border-subtle);
+  background: var(--bg-surface-elevated);
+  color: var(--text-primary);
+  box-shadow: var(--chatly-shadow-modal);
+}
+.app-shell :where(.compose-modal, .st-dialog) :where(input, textarea, select) { color: var(--text-primary); }
+.app-shell :where(.primary-button, .secondary-button, .send-button, .post-follow-button) {
+  min-height: 40px;
+  transition: transform 140ms ease, box-shadow 160ms ease, background-color 160ms ease;
+}
+.app-shell :where(.primary-button, .secondary-button, .send-button):active { transform: translateY(1px) scale(.985); }
+.app-shell :where(button:disabled, input:disabled, textarea:disabled, select:disabled) { cursor: not-allowed; }
+
+@media (hover: hover) and (pointer: fine) {
+  .app-shell .feed-page .post-card:hover {
+    border-color: color-mix(in srgb, var(--brand-accent) 24%, var(--border-subtle));
+    box-shadow: var(--chatly-shadow-soft);
+  }
+  .app-shell .explore-destination-page .explore-category-card:hover {
+    border-color: color-mix(in srgb, var(--brand-accent) 35%, var(--border-subtle));
+    box-shadow: var(--chatly-shadow-raised);
+    transform: translateY(-2px);
+  }
+  .app-shell .dedicated-search-page .search-post:hover,
+  .app-shell .dedicated-search-page .search-person:hover { background: var(--chatly-accent-soft); }
+}
+@media (max-width: 767px) {
+  .app-shell .app-main-column > .topbar { padding-inline: 12px; }
+  .app-shell .chatly-primary-nav { padding-top: 6px; padding-bottom: max(7px, env(safe-area-inset-bottom)); }
+  .app-shell .feed-page .post-card { border-radius: 15px; }
+  .app-shell .chat-layout .composer { padding-bottom: max(12px, env(safe-area-inset-bottom)); }
+  .app-shell .compose-modal,
+  .app-shell .comments-modal,
+  .app-shell .report-post-modal {
+    max-height: calc(100dvh - 24px - env(safe-area-inset-top));
+    overflow-y: auto;
+    overscroll-behavior: contain;
+  }
+}
+@media (max-width: 380px) {
+  .app-shell .chatly-primary-nav-label { font-size: 9px; }
+  .app-shell .feed-page .post-card { border-radius: 12px; }
+}
+@media (prefers-reduced-motion: reduce) {
+  .app-shell *, .app-shell *::before, .app-shell *::after {
+    scroll-behavior: auto !important;
+    animation-duration: .01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: .01ms !important;
+  }
+}
