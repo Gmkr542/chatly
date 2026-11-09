@@ -58,7 +58,7 @@ test("Group AI requires real membership and unanimous opt-in before returning bo
 
 test("patch is staged outside automatic migrations until migration history is reconciled", () => {
   assert.match(guide, /deliberately \*\*not\*\* discovered by `supabase db push`/i);
-  assert.match(guide, /migration history/i);
+  assert.match(guide, /migration[- ]history/i);
   assert.match(sql, /intentionally lives outside supabase\/migrations/i);
 });
 
@@ -75,7 +75,7 @@ test("group AI consent timestamps are enforced by a database trigger", () => {
   assert.match(sql, /REVOKE ALL ON FUNCTION public\.set_group_ai_consent_updated_at\(\) FROM PUBLIC, anon, authenticated/i);
 });
 
-test("migration versions are unique and the live ledger mappings use exact remote versions", () => {
+test("migration history collisions and live ledger mappings are explicitly reconciled", () => {
   const versions = migrationFiles
     .filter((file) => file.endsWith(".sql"))
     .map((file) => file.match(/^(\d+)_/)?.[1])

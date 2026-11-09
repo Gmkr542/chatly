@@ -33,7 +33,7 @@ test("Group AI provider credentials remain server-side and provider output is bo
   assert.match(edge, /Deno\.env\.get\(["']GROUP_AI_API_KEY["']\)/);
   assert.match(edge, /cleanText\(result\.summary, 4000\)/);
   assert.match(edge, /cleanStringList\(result\.topics, 8, 240\)/);
-  assert.match(edge, /providerTranscript = transcript[\\s\\S]*?cleanText\\(message\\?\\.text, 4000\\)/);
+  assert.match(edge, /providerTranscript = transcript[\s\S]*?cleanText\(message\?\.text, 4000\)/);
   assert.match(edge, /content: JSON\\.stringify\\(providerTranscript\\)/);
   assert.doesNotMatch(edge, /content: JSON\\.stringify\\(transcript\\)/);
   assert.match(edge, /cleanActionItems\(result\.action_items\)/);
