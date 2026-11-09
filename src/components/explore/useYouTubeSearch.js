@@ -31,7 +31,7 @@ export function useYouTubeSearch(query, category) {
   const [error, setError] = useState("");
 
   useEffect(() => {
-    const normalizedQuery = query.trim().replace(/\\s+/g, " ");
+    const normalizedQuery = query.trim().replace(/\s+/g, " ");
     const apiKey = import.meta.env.VITE_YOUTUBE_API_KEY;
 
     if (!["songs", "videos"].includes(category) || normalizedQuery.length < 2) {
