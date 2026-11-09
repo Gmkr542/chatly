@@ -26,6 +26,14 @@ ALTER TABLE public.profiles
 -- or relationship columns.
 REVOKE UPDATE ON TABLE public.posts FROM PUBLIC, anon, authenticated;
 REVOKE UPDATE ON TABLE public.post_comments FROM PUBLIC, anon, authenticated;
+
+-- Table-level REVOKE does not clear independently granted column privileges.
+-- Remove every existing UPDATE column grant observed on these tables first.
+REVOKE UPDATE (body, created_at, id, image_url, user_id, edited_at)
+  ON TABLE public.posts FROM PUBLIC, anon, authenticated;
+REVOKE UPDATE (body, created_at, id, post_id, user_id, edited_at)
+  ON TABLE public.post_comments FROM PUBLIC, anon, authenticated;
+
 GRANT UPDATE (body, edited_at) ON TABLE public.posts TO authenticated;
 GRANT UPDATE (body, edited_at) ON TABLE public.post_comments TO authenticated;
 
@@ -147,6 +155,27 @@ CREATE INDEX IF NOT EXISTS group_ai_consents_group_idx
   ON public.group_ai_consents (conversation_id, consented);
 
 ALTER TABLE public.group_ai_consents ENABLE ROW LEVEL SECURITY;
+
+-- The database, not the client, owns the consent-change timestamp.
+CREATE OR REPLACE FUNCTION public.set_group_ai_consent_updated_at()
+RETURNS trigger
+LANGUAGE plpgsql
+SET search_path = ''
+AS $function$
+BEGIN
+  NEW.updated_at := pg_catalog.now();
+  RETURN NEW;
+END;
+$function$;
+
+REVOKE ALL ON FUNCTION public.set_group_ai_consent_updated_at() FROM PUBLIC, anon, authenticated;
+
+DROP TRIGGER IF EXISTS group_ai_consents_set_updated_at
+  ON public.group_ai_consents;
+CREATE TRIGGER group_ai_consents_set_updated_at
+  BEFORE UPDATE ON public.group_ai_consents
+  FOR EACH ROW
+  EXECUTE FUNCTION public.set_group_ai_consent_updated_at();
 
 DROP POLICY IF EXISTS "Group members can view AI consent status"
   ON public.group_ai_consents;

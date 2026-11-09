@@ -1,6 +1,6 @@
 import test from "node:test";
 import assert from "node:assert/strict";
-import { readFile } from "node:fs/promises";
+import { readFile, readdir } from "node:fs/promises";
 
 const sql = await readFile(
   new URL("../supabase/manual-migrations/20261109_reconcile_live_schema.sql", import.meta.url),
@@ -10,6 +10,7 @@ const guide = await readFile(
   new URL("../supabase/manual-migrations/README.md", import.meta.url),
   "utf8"
 );
+const migrationFiles = await readdir(new URL("../supabase/migrations/", import.meta.url));
 
 test("reconciliation adds only the frontend-required nullable/defaulted columns", () => {
   assert.match(sql, /posts\s+ADD COLUMN IF NOT EXISTS edited_at timestamptz/i);
@@ -20,6 +21,8 @@ test("reconciliation adds only the frontend-required nullable/defaulted columns"
 test("post and comment edits are restricted to body and edited_at", () => {
   assert.match(sql, /REVOKE UPDATE ON TABLE public\.posts FROM PUBLIC, anon, authenticated/i);
   assert.match(sql, /REVOKE UPDATE ON TABLE public\.post_comments FROM PUBLIC, anon, authenticated/i);
+  assert.match(sql, /REVOKE UPDATE \(body, created_at, id, image_url, user_id, edited_at\)[\s\S]*?ON TABLE public\.posts FROM PUBLIC, anon, authenticated/i);
+  assert.match(sql, /REVOKE UPDATE \(body, created_at, id, post_id, user_id, edited_at\)[\s\S]*?ON TABLE public\.post_comments FROM PUBLIC, anon, authenticated/i);
   assert.match(sql, /GRANT UPDATE \(body, edited_at\) ON TABLE public\.posts TO authenticated/i);
   assert.match(sql, /GRANT UPDATE \(body, edited_at\) ON TABLE public\.post_comments TO authenticated/i);
   assert.match(sql, /Users can update their own posts[\s\S]*?USING \(\(SELECT auth\.uid\(\)\) = user_id\)[\s\S]*?WITH CHECK \(\(SELECT auth\.uid\(\)\) = user_id\)/i);
@@ -63,4 +66,23 @@ test("patch is transactional and contains no destructive data reset", () => {
   assert.match(sql, /^BEGIN;/m);
   assert.match(sql, /^COMMIT;/m);
   assert.doesNotMatch(sql, /^\s*(DROP TABLE|TRUNCATE|DELETE FROM)\b/im);
+});
+
+test("group AI consent timestamps are enforced by a database trigger", () => {
+  assert.match(sql, /CREATE OR REPLACE FUNCTION public\.set_group_ai_consent_updated_at\(\)/i);
+  assert.match(sql, /NEW\.updated_at := pg_catalog\.now\(\)/i);
+  assert.match(sql, /BEFORE UPDATE ON public\.group_ai_consents[\s\S]*?EXECUTE FUNCTION public\.set_group_ai_consent_updated_at\(\)/i);
+  assert.match(sql, /REVOKE ALL ON FUNCTION public\.set_group_ai_consent_updated_at\(\) FROM PUBLIC, anon, authenticated/i);
+});
+
+test("migration versions are unique and the live ledger mappings use exact remote versions", () => {
+  const versions = migrationFiles
+    .filter((file) => file.endsWith(".sql"))
+    .map((file) => file.match(/^(\\d+)_/)?.[1])
+    .filter(Boolean);
+  assert.equal(new Set(versions).size, versions.length, "duplicate migration version prefixes remain");
+  assert.ok(migrationFiles.includes("20261109075405_harden_private_follow_visibility.sql"));
+  assert.ok(migrationFiles.includes("20261109075633_restrict_trigger_function_execution.sql"));
+  assert.ok(migrationFiles.includes("20261109080037_optimize_rls_policies_and_fk_indexes.sql"));
+  assert.match(guide, /unmatched historical migrations remain pending/i);
 });
