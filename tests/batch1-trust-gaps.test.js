@@ -30,8 +30,9 @@ test("read receipts are gated in the client and enforced by the database RPC", (
 
 test("unsupported alert and media preferences are disabled in settings", () => {
   const settings = read("../src/components/SettingsDestination.jsx");
+  assert.match(settings, /function Toggle\(\{[^}]*disabled = false[^}]*\}\)[\s\S]*?disabled=\{disabled\}/);
   for (const key of ["messageAlerts", "activityAlerts", "likesAlerts", "commentAlerts", "mentionAlerts", "mediaPreview", "autoDownloadMedia"]) {
-    assert.match(settings, new RegExp("checked=\\{safePrefs\\." + key + "\\}[^>]*disabled=\\{true\\}"));
+    assert.match(settings, new RegExp('<Toggle[^>]*checked=\\{safePrefs\\.' + key + '\\}[^>]*disabled=\\{true\\}'));
   }
 });
 
