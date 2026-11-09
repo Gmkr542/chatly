@@ -2,17 +2,13 @@
    Uses the existing tab state and design-token layer; presentation only. */
 .app-shell {
   display: grid;
-  grid-template-columns: 240px minmax(0, 600px) minmax(0, 1fr);
+  grid-template-columns: minmax(0, 760px);
+  justify-content: center;
   align-items: start;
   min-height: 100dvh;
   width: 100%;
 }
-.app-desktop-sidebar {
-  grid-column: 1; grid-row: 1; position: sticky; top: 0; display: flex; flex-direction: column;
-  gap: var(--space-6); width: 240px; height: 100dvh; min-height: 480px;
-  padding: var(--space-6) var(--space-4); background: var(--bg-surface);
-  border-right: 1px solid var(--border-subtle); color: var(--text-primary); z-index: 20;
-}
+.app-desktop-sidebar { display: none !important; }
 .app-sidebar-brand {
   padding: var(--space-2) var(--space-3); color: var(--brand-accent);
   font-family: var(--font-sans); font-size: 1.75rem; font-style: italic;
@@ -39,8 +35,14 @@
 }
 .app-sidebar-footer { margin-top: auto; padding: var(--space-3); color: var(--text-muted); font-size: var(--text-xs); line-height: var(--lh-sm); }
 .app-main-column {
-  grid-column: 2; grid-row: 1; width: 100%; max-width: 600px; min-width: 0; min-height: 100dvh;
-  background: var(--bg-primary); color: var(--text-primary);
+  grid-column: 1;
+  grid-row: 1;
+  width: 100%;
+  max-width: 760px;
+  min-width: 0;
+  min-height: 100dvh;
+  background: var(--bg-primary);
+  color: var(--text-primary);
 }
 .app-main-column > .topbar {
   position: sticky; top: 0; z-index: var(--chatly-layer-header, 15);
@@ -53,38 +55,28 @@
 }
 .app-main-column .global-profile-trigger { min-width: 44px; min-height: 44px; }
 .app-mobile-nav { display: none; }
-@media (max-width: 1023px) {
-  .app-shell { grid-template-columns: 224px minmax(0, 1fr); }
-  .app-desktop-sidebar { width: 224px; }
-  .app-main-column { grid-column: 2; max-width: none; }
-}
 @media (max-width: 767px) {
-  .app-shell { --chatly-mobile-nav-height: 64px; grid-template-columns: minmax(0, 1fr); }
-  .app-desktop-sidebar { display: none; }
-  .app-main-column {
-    grid-column: 1; width: 100%; max-width: none; min-height: 100dvh;
-    padding-bottom: calc(var(--chatly-mobile-nav-height) + env(safe-area-inset-bottom, 0px));
-  }
+  .app-shell { grid-template-columns: minmax(0, 1fr); }
+  .app-main-column { grid-column: 1; width: 100%; max-width: none; min-height: 100dvh; padding-bottom: env(safe-area-inset-bottom, 0px); }
   .app-main-column > .topbar .brand { display: flex; }
   .app-main-column > .topbar .global-notification-trigger { margin-left: auto !important; }
-  .app-mobile-nav {
-    position: fixed; inset-inline: 0; bottom: 0; z-index: 100; display: grid;
-    grid-template-columns: repeat(6, minmax(0, 1fr)); align-items: center; gap: 0;
-    height: calc(64px + env(safe-area-inset-bottom, 0px));
-    padding: 4px max(6px, env(safe-area-inset-right, 0px)) env(safe-area-inset-bottom, 0px) max(6px, env(safe-area-inset-left, 0px));
-    background: var(--bg-surface-elevated); border-top: 1px solid var(--border-subtle);
-    box-shadow: 0 -8px 24px rgb(20 20 40 / 5%);
-  }
-  .app-mobile-nav-item {
-    display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 3px;
-    min-width: 0; min-height: 44px; height: 100%; padding: 3px 1px; border: 0;
-    border-radius: var(--radius-md); background: transparent; color: var(--text-muted);
-    font: var(--weight-medium) 10px / 1.2 var(--font-sans); white-space: nowrap;
-    transition: color 180ms ease, background-color 180ms ease;
-  }
-  .app-mobile-nav-item.is-active { color: var(--brand-accent); background: var(--brand-focus); font-weight: var(--weight-semibold); }
-  .app-mobile-nav-item > svg { flex-basis: 20px; }
 }
 @media (prefers-reduced-motion: reduce) {
   .app-nav-item, .app-mobile-nav-item { transition: none; }
 }
+
+/* Top-right account navigation replaces all persistent navigation bars. */
+.global-profile-backdrop { position: fixed; inset: 0; z-index: 1190; border: 0; background: rgb(15 15 25 / 18%); }
+.global-profile-drawer { position: fixed; z-index: 1200; top: calc(64px + env(safe-area-inset-top, 0px)); right: max(14px, calc((100vw - 760px) / 2 + 14px)); display: flex; flex-direction: column; gap: 4px; width: min(290px, calc(100vw - 28px)); padding: 10px; border: 1px solid var(--border, #e4e4e9); border-radius: 18px; background: var(--surface, #fff); color: var(--text, #17171b); box-shadow: 0 18px 48px rgb(20 20 35 / 18%); }
+.global-profile-drawer-head { display: flex; align-items: center; gap: 10px; padding: 8px 7px 12px; margin-bottom: 4px; border-bottom: 1px solid var(--border, #e4e4e9); }
+.global-profile-drawer-head > div { display: flex; flex: 1; min-width: 0; flex-direction: column; gap: 3px; }
+.global-profile-drawer-head strong { overflow: hidden; font-size: 14px; text-overflow: ellipsis; white-space: nowrap; }
+.global-profile-drawer-head span:not(.global-profile-avatar) { color: var(--muted, #888); font-size: 12px; }
+.global-profile-drawer-head > button { display: grid; width: 34px; height: 34px; place-items: center; border: 0; border-radius: 10px; background: transparent; color: inherit; }
+.global-profile-drawer > button { display: flex; align-items: center; gap: 12px; min-height: 44px; padding: 0 12px; border: 0; border-radius: 11px; background: transparent; color: inherit; font: inherit; font-size: 14px; text-align: left; cursor: pointer; }
+.global-profile-drawer > button:hover { background: var(--chatly-accent-soft, #f0edff); color: var(--chatly-accent, #6557e8); }
+.global-profile-drawer > .global-profile-logout { margin-top: 5px; border-top: 1px solid var(--border, #e4e4e9); border-radius: 0 0 10px 10px; color: #d34b59; }
+.app-shell .app-main-column { grid-column: 1; }
+.app-shell .topbar { justify-content: flex-start; }
+.app-main-column > .topbar .brand { display: flex !important; }
+.app-shell .topbar .global-profile-menu { margin-left: 0; }
