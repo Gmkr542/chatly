@@ -1,0 +1,16 @@
+/* Batch 05 — profile hierarchy and content grid */
+.app-shell .public-profile-page { min-width: 0; }
+.app-shell .profile-view { width: 100%; max-width: 720px; margin-inline: auto; }
+.app-shell .profile-hero { padding: clamp(18px, 4vw, 28px); border-bottom: 1px solid var(--border-subtle); }
+.app-shell .profile-identity { min-width: 0; }
+.app-shell .profile-identity h1 { letter-spacing: -.04em; overflow-wrap: anywhere; }
+.app-shell .profile-avatar { flex: 0 0 auto; width: clamp(76px, 18vw, 112px); aspect-ratio: 1; border-radius: 50%; object-fit: cover; }
+.app-shell .profile-bio-text { max-width: 58ch; line-height: 1.6; overflow-wrap: anywhere; }
+.app-shell .profile-stats { display: flex; flex-wrap: wrap; gap: clamp(14px, 4vw, 28px); }
+.app-shell .profile-stats > * { min-width: 56px; }
+.app-shell .profile-actions { display: flex; flex-wrap: wrap; gap: 10px; }
+.app-shell .profile-actions button { min-height: 42px; }
+.app-shell .profile-posts-title { padding: 18px 20px 10px; font-size: var(--text-sm); font-weight: var(--weight-semibold); }
+.app-shell .profile-post-grid { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 3px; }
+.app-shell .profile-post { min-width: 0; overflow: hidden; }
+.app-shell .profile-empty { margin: 20px; padding: 28px; border: 1px dashed var(--border-subtle); border-radius: 18px; }
