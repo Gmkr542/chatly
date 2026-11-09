@@ -6,7 +6,7 @@
   bottom: 0;
   transform: translateX(-50%);
   display: grid;
-  grid-template-columns: repeat(6, minmax(0, 1fr));
+  grid-template-columns: repeat(4, minmax(0, 1fr));
   width: min(100%, 820px);
   padding: 7px max(8px, env(safe-area-inset-left)) max(7px, env(safe-area-inset-bottom)) max(8px, env(safe-area-inset-right));
   border: 1px solid var(--border, var(--chatly-border, #e7e7ed));
