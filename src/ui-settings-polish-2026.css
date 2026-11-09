@@ -1,0 +1,19 @@
+/* Batch 08 — settings and account surfaces */
+.app-shell .app-settings-destination-page { min-width: 0; }
+.app-shell .settings-page { width: 100%; max-width: 760px; margin-inline: auto; }
+.app-shell .st-intro { padding: 20px; }
+.app-shell .st-home-heading { letter-spacing: -.04em; }
+.app-shell .st-search-wrap { position: sticky; top: 0; z-index: 3; padding: 8px 16px; background: var(--bg-primary); }
+.app-shell .st-search { min-height: 44px; border-radius: 14px; }
+.app-shell .st-group { padding: 8px 16px 16px; }
+.app-shell .st-nav-card, .app-shell .st-card { border: 1px solid var(--border-subtle); border-radius: 16px; background: var(--bg-surface); }
+.app-shell .st-nav-row { min-height: 64px; gap: 12px; }
+.app-shell .st-icon { flex: 0 0 40px; width: 40px; height: 40px; border-radius: 12px; }
+.app-shell .st-nav-copy { min-width: 0; }
+.app-shell .st-nav-copy small { line-height: 1.4; }
+.app-shell .st-pref-row { min-height: 60px; gap: 16px; }
+.app-shell .st-pref-row input { width: 20px; height: 20px; accent-color: var(--brand-accent); }
+.app-shell .st-detail-row, .app-shell .st-inline-form { min-width: 0; }
+.app-shell .st-overlay { padding: 16px; }
+.app-shell .st-dialog { width: min(100%, 480px); border-radius: 20px; }
+.app-shell .st-message { overflow-wrap: anywhere; }

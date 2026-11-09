@@ -1,0 +1,19 @@
+/* Batch 04 — conversation and messaging surfaces */
+.app-shell .sidebar { min-width: 0; background: var(--bg-surface); border-color: var(--border-subtle); }
+.app-shell .sidebar-heading { padding: 16px; }
+.app-shell .chat-heading-title { letter-spacing: -.03em; }
+.app-shell .chat-filter-row { display: flex; gap: 8px; overflow-x: auto; scrollbar-width: none; }
+.app-shell .chat-filter-row::-webkit-scrollbar { display: none; }
+.app-shell .people-list { min-width: 0; }
+.app-shell .people-list > * { min-width: 0; }
+.app-shell .conversation { min-width: 0; background: var(--bg-primary); }
+.app-shell .conversation-header { position: sticky; top: 0; z-index: 3; background: var(--bg-surface); border-bottom: 1px solid var(--border-subtle); }
+.app-shell .message-list { overscroll-behavior: contain; scroll-behavior: smooth; }
+.app-shell .bubble { max-width: min(78%, 560px); overflow-wrap: anywhere; line-height: 1.55; }
+.app-shell .incoming .bubble { border-radius: 4px 18px 18px 18px; }
+.app-shell .outgoing .bubble { border-radius: 18px 4px 18px 18px; }
+.app-shell .message-date-separator { position: sticky; top: 8px; z-index: 2; width: fit-content; margin-inline: auto; }
+.app-shell .composer { position: sticky; bottom: 0; background: var(--bg-surface); border-top: 1px solid var(--border-subtle); padding-bottom: max(10px, env(safe-area-inset-bottom)); }
+.app-shell .composer textarea { min-height: 42px; max-height: 140px; resize: vertical; }
+.app-shell .send-button { min-width: 44px; min-height: 44px; border-radius: 50%; }
+.app-shell .empty-chat { border: 1px dashed var(--border-subtle); border-radius: 20px; }
