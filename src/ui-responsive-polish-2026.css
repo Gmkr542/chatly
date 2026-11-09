@@ -1,0 +1,29 @@
+/* Batch 10 — responsive and final quality pass */
+.app-shell :where(.feed-page, .conversation, .search-page, .settings-page, .profile-view) { min-width: 0; }
+.app-shell :where(.post-card, .notification-activity-copy, .person-copy, .profile-identity) { overflow-wrap: anywhere; }
+.app-shell :where(.posts-list, .message-list, .notification-activity-list) { overscroll-behavior-y: contain; }
+.app-shell :where(.post-media, .profile-post-grid, .explore-category-grid) { max-width: 100%; }
+.app-shell :where(.post-media img, .post-media video) { max-width: 100%; }
+.app-shell :where(.feed-header-shortcuts, .profile-actions, .notification-heading-actions) { flex-wrap: wrap; }
+@media (max-width: 767px) {
+  .app-shell .feed-page .posts-list { padding-inline: 10px; }
+  .app-shell .feed-page .post-card { padding: 13px; border-radius: 15px; }
+  .app-shell .explore-home { padding: 12px; }
+  .app-shell .profile-hero { padding: 16px 14px; }
+  .app-shell .profile-post-grid { grid-template-columns: repeat(3, minmax(0, 1fr)); }
+  .app-shell .bubble { max-width: 86%; }
+  .app-shell .conversation-header { padding-inline: 12px; }
+  .app-shell .notification-content { padding-inline: 8px; }
+  .app-shell .st-intro { padding: 16px 14px; }
+  .app-shell .st-group { padding-inline: 12px; }
+  .app-shell :where(.compose-modal, .st-dialog) { width: min(100%, 100vw - 20px); border-radius: 18px; }
+}
+@media (max-width: 360px) {
+  .app-shell .app-mobile-nav-item { font-size: 9px; }
+  .app-shell .app-mobile-nav { padding-inline: 2px; }
+  .app-shell .feed-page .post-actions { gap: 4px; }
+  .app-shell .explore-category-grid { gap: 8px; }
+}
+@media (min-width: 1280px) {
+  .app-shell .app-main-column { max-width: 680px; }
+}
