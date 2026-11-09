@@ -1,0 +1,36 @@
+/* Feed scroll recovery.
+   The legacy viewport shell was clamping the entire app to 100dvh and hiding
+   overflow. Let the document grow naturally so the feed can use page scrolling
+   on mobile browsers and desktop, while chat/message panes keep their own scroll. */
+html,
+body,
+#root {
+  min-height: 100%;
+  height: auto;
+}
+
+body {
+  overflow-x: hidden;
+  overflow-y: auto;
+}
+
+.app-shell {
+  height: auto !important;
+  min-height: 100dvh;
+  overflow: visible !important;
+}
+
+.app-shell .app-main-column {
+  min-height: 100dvh;
+  height: auto;
+}
+
+.app-shell .feed-page {
+  flex: none;
+  min-height: 0;
+  height: auto;
+  overflow: visible;
+  overflow-y: visible;
+  overscroll-behavior-y: auto;
+  padding-bottom: calc(100px + env(safe-area-inset-bottom, 0px));
+}
