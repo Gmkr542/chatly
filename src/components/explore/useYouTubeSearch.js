@@ -1,15 +1,40 @@
 import { useEffect, useState } from "react";
 
+const CACHE_TTL_MS = 5 * 60 * 1000;
+const MAX_CACHE_ENTRIES = 50;
+const searchCache = new Map();
+
+function readCachedSearch(key) {
+  const cached = searchCache.get(key);
+  if (!cached) return null;
+  if (Date.now() - cached.savedAt > CACHE_TTL_MS) {
+    searchCache.delete(key);
+    return null;
+  }
+  // Refresh insertion order so frequently used searches remain in the small cache.
+  searchCache.delete(key);
+  searchCache.set(key, cached);
+  return cached.videos;
+}
+
+function cacheSearch(key, videos) {
+  searchCache.delete(key);
+  searchCache.set(key, { videos, savedAt: Date.now() });
+  if (searchCache.size > MAX_CACHE_ENTRIES) {
+    searchCache.delete(searchCache.keys().next().value);
+  }
+}
+
 export function useYouTubeSearch(query, category) {
   const [videos, setVideos] = useState([]);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState("");
 
   useEffect(() => {
-    const normalizedQuery = query.trim();
+    const normalizedQuery = query.trim().replace(/\\s+/g, " ");
     const apiKey = import.meta.env.VITE_YOUTUBE_API_KEY;
 
-    if (!["songs", "videos"].includes(category) || !normalizedQuery) {
+    if (!["songs", "videos"].includes(category) || normalizedQuery.length < 2) {
       setVideos([]);
       setError("");
       setLoading(false);
@@ -23,6 +48,15 @@ export function useYouTubeSearch(query, category) {
       return;
     }
 
+    const cacheKey = category + ":" + normalizedQuery.toLocaleLowerCase();
+    const cachedVideos = readCachedSearch(cacheKey);
+    if (cachedVideos) {
+      setVideos(cachedVideos);
+      setError("");
+      setLoading(false);
+      return;
+    }
+
     let alive = true;
     const controller = new AbortController();
     setVideos([]);
@@ -31,7 +65,6 @@ export function useYouTubeSearch(query, category) {
 
     const timer = window.setTimeout(async () => {
       if (!alive) return;
-      setLoading(true);
 
       try {
         const searchParams = {
@@ -60,7 +93,10 @@ export function useYouTubeSearch(query, category) {
 
         const results = Array.isArray(data.items) ? data.items : [];
         const validVideos = results.filter(video => video?.id?.videoId && video?.snippet);
-        if (alive) setVideos(validVideos);
+        if (alive) {
+          cacheSearch(cacheKey, validVideos);
+          setVideos(validVideos);
+        }
       } catch (requestError) {
         if (alive && requestError.name !== "AbortError") {
           setVideos([]);
@@ -69,7 +105,7 @@ export function useYouTubeSearch(query, category) {
       } finally {
         if (alive) setLoading(false);
       }
-    }, 350);
+    }, 450);
 
     return () => {
       alive = false;

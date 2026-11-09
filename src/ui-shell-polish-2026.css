@@ -11,4 +11,9 @@
 .app-main-column > .topbar { backdrop-filter: saturate(1.35) blur(16px); background: color-mix(in srgb, var(--bg-surface) 92%, transparent); }
 .app-mobile-nav { backdrop-filter: saturate(1.4) blur(18px); }
 .app-mobile-nav-item:active { transform: scale(.96); }
-@media (min-width: 1024px) { .app-shell { grid-template-columns: 248px minmax(0, 640px) minmax(0, 1fr); } .app-desktop-sidebar { width: 248px; } .app-main-column { max-width: 640px; } }
+@media (min-width: 1024px) {
+  /* The current shell uses the account drawer, not a persistent desktop sidebar. */
+  .app-shell { grid-template-columns: minmax(0, 760px); justify-content: center; }
+  .app-desktop-sidebar { display: none !important; }
+  .app-main-column { grid-column: 1; max-width: 760px; }
+}

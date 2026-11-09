@@ -34,6 +34,9 @@ export default function App() {
   useEffect(() => { setStoredJSON("chatly-chat-prefs", chatPrefs); }, [chatPrefs]);
   const [editProfileOpen, setEditProfileOpen] = useState(false);
   const [tab, setTab] = useState("feed");
+  useEffect(() => {
+    window.scrollTo({ top: 0, left: 0, behavior: "auto" });
+  }, [tab]);
   const [searchInitialQuery, setSearchInitialQuery] = useState("");
   const [theme, setTheme] = useState(() => getStoredValue("chatly-theme", "system"));
   const [systemDark, setSystemDark] = useState(() => window.matchMedia?.("(prefers-color-scheme: dark)").matches || false);
