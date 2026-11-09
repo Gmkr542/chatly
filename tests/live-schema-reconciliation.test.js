@@ -78,7 +78,7 @@ test("group AI consent timestamps are enforced by a database trigger", () => {
 test("migration versions are unique and the live ledger mappings use exact remote versions", () => {
   const versions = migrationFiles
     .filter((file) => file.endsWith(".sql"))
-    .map((file) => file.match(/^(\\d+)_/)?.[1])
+    .map((file) => file.match(/^(\d+)_/)?.[1])
     .filter(Boolean);
   assert.equal(new Set(versions).size, versions.length, "duplicate migration version prefixes remain");
   assert.ok(migrationFiles.includes("20261109075405_harden_private_follow_visibility.sql"));

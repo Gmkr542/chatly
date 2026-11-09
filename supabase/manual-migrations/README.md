@@ -12,7 +12,7 @@ The production migration ledger was inspected and contains these three entries:
 
 Those three filenames now match the exact remote version/name pairs. The earlier duplicate local prefixes were removed by aligning these three files to their verified remote ledger versions.
 
-**Important:** the rest of the repository's historical migrations are not represented by those three remote ledger entries. Their live application status has not been established merely by inspecting the ledger. They remain unresolved/pending for reconciliation; do not run `supabase db push`, `migration repair`, or a bulk migration replay until every remaining file has been compared with the actual production schema and a verified backup/staging restore is available.
+**Important:** the rest of the repository's historical migrations are not represented by those three remote ledger entries. Their live application status has not been established merely by inspecting the ledger. They remain unresolved/pending for reconciliation (unmatched historical migrations remain pending); do not run `supabase db push`, `migration repair`, or a bulk migration replay until every remaining file has been compared with the actual production schema and a verified backup/staging restore is available.
 
 ## Staged reconciliation patch
 
