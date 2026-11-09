@@ -27,3 +27,14 @@
 @media (min-width: 1280px) {
   .app-shell .app-main-column { max-width: 680px; }
 }
+
+/* Mobile feed composition: keep discovery controls compact and posts comfortably wide. */
+@media (max-width: 767px) {
+  .app-shell .feed-page .feed-header-section { padding: 8px 16px 10px; }
+  .app-shell .feed-page .posts-list { padding-inline: 12px; }
+  .app-shell .feed-page .post-card { width: 100%; max-width: 760px; margin-inline: auto; }
+  .app-shell .feed-page .feed-discovery-row { margin-top: 0; }
+}
+@media (min-width: 768px) {
+  .app-shell .feed-page .post-card { width: min(100%, 760px); margin-inline: auto; }
+}
