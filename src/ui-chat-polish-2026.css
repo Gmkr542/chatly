@@ -10,8 +10,8 @@
 .app-shell .conversation-header { position: sticky; top: 0; z-index: 3; background: var(--bg-surface); border-bottom: 1px solid var(--border-subtle); }
 .app-shell .message-list { overscroll-behavior: contain; scroll-behavior: smooth; }
 .app-shell .bubble { max-width: min(78%, 560px); overflow-wrap: anywhere; line-height: 1.55; }
-.app-shell .bubble:not(.outgoing) { border-radius: 4px 18px 18px 18px; }
-.app-shell .bubble.outgoing { border-radius: 18px 4px 18px 18px; }
+.app-shell .message.theirs .bubble { border-radius: 4px 18px 18px 18px; }
+.app-shell .message.mine .bubble { border-radius: 18px 4px 18px 18px; }
 .app-shell .message-date-separator { position: sticky; top: 8px; z-index: 2; width: fit-content; margin-inline: auto; }
 .app-shell .composer { position: sticky; bottom: 0; background: var(--bg-surface); border-top: 1px solid var(--border-subtle); padding-bottom: max(10px, env(safe-area-inset-bottom)); }
 .app-shell .composer textarea { min-height: 42px; max-height: 140px; resize: vertical; }
