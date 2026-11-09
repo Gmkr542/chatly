@@ -14,3 +14,97 @@
 .app-shell .profile-post-grid { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 3px; }
 .app-shell .profile-post { min-width: 0; overflow: hidden; }
 .app-shell .profile-empty { margin: 20px; padding: 28px; border: 1px dashed var(--border-subtle); border-radius: 18px; }
+
+
+/* Instagram-inspired profile gallery for Chatly's text-first posts. */
+.app-shell .public-profile-page .profile-view { max-width: 760px; }
+.app-shell .public-profile-page .profile-hero {
+  display: flex;
+  align-items: flex-start;
+  gap: clamp(18px, 5vw, 38px);
+  padding: clamp(20px, 4vw, 30px) clamp(14px, 3vw, 24px);
+}
+.app-shell .public-profile-page .profile-avatar {
+  width: clamp(82px, 18vw, 118px);
+  height: clamp(82px, 18vw, 118px);
+  border: 1px solid var(--chatly-border, var(--border-subtle));
+  padding: 2px;
+  background: var(--chatly-surface, var(--bg-surface));
+}
+.app-shell .public-profile-page .profile-identity { flex: 1; min-width: 0; }
+.app-shell .public-profile-page .profile-identity h1 { margin: 0 0 4px; font-size: clamp(20px, 3vw, 26px); }
+.app-shell .public-profile-page .profile-identity > p:not(.profile-bio-text) { margin: 0 0 10px; color: var(--chatly-muted, var(--text-muted)); font-size: 13px; }
+.app-shell .public-profile-page .profile-bio-text { margin: 10px 0 14px; font-size: 13px; }
+.app-shell .public-profile-page .profile-stats {
+  display: flex;
+  justify-content: flex-start;
+  gap: clamp(16px, 4vw, 32px);
+  margin: 14px 0;
+}
+.app-shell .public-profile-page .profile-stats > span { display: flex; align-items: baseline; gap: 4px; color: var(--chatly-muted, var(--text-muted)); font-size: 12px; }
+.app-shell .public-profile-page .profile-stats b { color: var(--chatly-ink, var(--text-primary)); font-size: 14px; font-weight: 700; }
+.app-shell .public-profile-page .profile-actions { gap: 8px; }
+.app-shell .public-profile-page .profile-actions button { min-width: 112px; min-height: 38px; border-radius: 10px; }
+.app-shell .public-profile-page .profile-posts-title {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  min-height: 48px;
+  margin: 0;
+  padding: 10px 14px;
+  border-top: 1px solid var(--chatly-border, var(--border-subtle));
+  font-size: 12px;
+  font-weight: 700;
+  letter-spacing: .08em;
+  text-transform: uppercase;
+}
+.app-shell .public-profile-page .profile-post-grid {
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 3px;
+}
+.app-shell .public-profile-page .profile-post {
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  aspect-ratio: 1 / 1;
+  min-height: 0;
+  padding: clamp(9px, 2vw, 16px);
+  border: 0 !important;
+  border-radius: 0;
+  background: color-mix(in srgb, var(--chatly-brand-soft, var(--brand-focus)) 45%, var(--chatly-surface, var(--bg-surface)));
+  box-shadow: none !important;
+}
+.app-shell .public-profile-page .profile-post:nth-child(3n + 2) { background: color-mix(in srgb, var(--chatly-surface, var(--bg-surface)) 84%, var(--chatly-brand-soft, var(--brand-focus))); }
+.app-shell .public-profile-page .profile-post p {
+  display: -webkit-box;
+  overflow: hidden;
+  margin: 0;
+  color: var(--chatly-ink, var(--text-primary));
+  font-size: clamp(10px, 1.5vw, 13px);
+  line-height: 1.5;
+  -webkit-box-orient: vertical;
+  -webkit-line-clamp: 6;
+}
+.app-shell .public-profile-page .profile-post small {
+  margin-top: 8px;
+  color: var(--chatly-muted, var(--text-muted));
+  font-size: 9px;
+}
+@media (hover: hover) and (pointer: fine) {
+  .app-shell .public-profile-page .profile-post { transition: background-color 160ms ease, filter 160ms ease; }
+  .app-shell .public-profile-page .profile-post:hover { filter: brightness(.97); }
+}
+@media (max-width: 600px) {
+  .app-shell .public-profile-page .profile-hero { gap: 16px; padding: 18px 14px 20px; }
+  .app-shell .public-profile-page .profile-avatar { width: 78px; height: 78px; }
+  .app-shell .public-profile-page .profile-stats { gap: 12px; }
+  .app-shell .public-profile-page .profile-stats > span { flex-direction: column; gap: 1px; font-size: 10px; }
+  .app-shell .public-profile-page .profile-stats b { font-size: 13px; }
+  .app-shell .public-profile-page .profile-post-grid { gap: 2px; }
+  .app-shell .public-profile-page .profile-post { padding: 8px; }
+  .app-shell .public-profile-page .profile-post p { font-size: 10px; -webkit-line-clamp: 5; }
+  .app-shell .public-profile-page .profile-post small { font-size: 8px; }
+}
+@media (prefers-reduced-motion: reduce) {
+  .app-shell .public-profile-page .profile-post { transition: none; }
+}
