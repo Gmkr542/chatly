@@ -16,7 +16,7 @@ export default function AppNavigation({ activeTab, profile, profileMenuOpen, onT
       {destinations.map(({ id, label, Icon }) => {
         const active = selectedTab === id;
         return (
-          {id === "profile" ? (
+          id === "profile" ? (
             <div className="global-profile-menu chatly-primary-nav-profile" key={id}>
               <button type="button" className={`chatly-primary-nav-item global-profile-trigger${active ? " is-active" : ""}`} aria-current={active ? "page" : undefined} aria-label="Open navigation menu" title="Account navigation" aria-expanded={profileMenuOpen} aria-haspopup="true" onClick={onToggleProfileMenu}>
                 <span className="chatly-primary-nav-icon"><UserRound size={20} strokeWidth={active ? 2.35 : 1.9} aria-hidden="true" /></span>
@@ -28,7 +28,7 @@ export default function AppNavigation({ activeTab, profile, profileMenuOpen, onT
               <span className="chatly-primary-nav-icon"><Icon size={20} strokeWidth={active ? 2.35 : 1.9} aria-hidden="true" /></span>
               <span className="chatly-primary-nav-label">{label}</span>
             </button>
-          )}
+          )
         );
       })}
     </nav>
