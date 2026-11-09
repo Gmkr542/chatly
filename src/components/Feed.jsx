@@ -243,9 +243,12 @@ const commentComposerRef = useRef(null);
     if (!editingPost || !text || editBusy) return;
     setEditBusy(true); setNotice("");
     try {
-      const { error } = await supabase.from("posts").update({ body: text }).eq("id", editingPost.id).eq("user_id", session.user.id);
+      const editedAt = new Date().toISOString();
+      const { data, error } = await supabase.from("posts").update({ body: text, edited_at: editedAt })
+        .eq("id", editingPost.id).eq("user_id", session.user.id).select("id,edited_at").maybeSingle();
       if (error) throw error;
-      setPosts(current => current.map(post => post.id === editingPost.id ? { ...post, body: text } : post));
+      if (!data) throw new Error("Post was not updated. It may have been deleted or you may not have permission.");
+      setPosts(current => current.map(post => post.id === editingPost.id ? { ...post, body: text, edited_at: data.edited_at || editedAt } : post));
       setEditingPost(null); setEditDraft("");
     } catch (error) { setNotice(error.message || "Could not update your post. Please try again."); }
     finally { setEditBusy(false); }
@@ -366,9 +369,12 @@ const commentComposerRef = useRef(null);
     setCommentActionBusy(comment.id);
     setCommentEditBusy(true); setCommentError("");
     try {
-      const { error } = await supabase.from("post_comments").update({ body: text }).eq("id", comment.id).eq("user_id", session.user.id);
+      const editedAt = new Date().toISOString();
+      const { data, error } = await supabase.from("post_comments").update({ body: text, edited_at: editedAt })
+        .eq("id", comment.id).eq("user_id", session.user.id).select("id,edited_at").maybeSingle();
       if (error) throw error;
-      setComments(current => ({ ...current, [comment.post_id]: (current[comment.post_id] || []).map(item => item.id === comment.id ? { ...item, body: text } : item) }));
+      if (!data) throw new Error("Comment was not updated. It may have been deleted or you may not have permission.");
+      setComments(current => ({ ...current, [comment.post_id]: (current[comment.post_id] || []).map(item => item.id === comment.id ? { ...item, body: text, edited_at: data.edited_at || editedAt } : item) }));
       setEditingComment(null); setCommentEditDraft("");
       setCommentActionsOpen(null);
     } catch (error) { setCommentError(error.message || "Could not update this comment."); }

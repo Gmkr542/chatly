@@ -20,9 +20,10 @@ test("private profile uses a draft and an explicit save action", () => {
 
 test("settings destinations expose notification, chat and appearance controls", () => {
   for (const label of ["COMMUNITY ACTIVITY", "COMPOSING MESSAGES", "TEXT & PREVIEW", "Restore default appearance"]) {
-    assert.ok(component.includes(label), `Missing settings control: ${label}`);
+    assert.ok(component.includes(label), "Missing settings control: " + label);
   }
-  assert.match(component, /const pref = \(key, value\) => setChatPrefs\(current =>/);
+  assert.match(component, /const pref = async \(key, value\) => \{\s*setChatPrefs\(current => updateSettingsPreference\(current, key, value\)\);/);
+  assert.match(component, /if \(key !== "readReceipts" \|\| !session\?\.user\?\.id \|\| !supabase\) return/);
 });
 
 test("dialogs can be dismissed with Escape and explicit buttons", () => {

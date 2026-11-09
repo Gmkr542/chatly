@@ -76,7 +76,18 @@ export default function SettingsDestination({ onBack = () => {}, onSubpageChange
   const title = ({ "email":"Email address", "password":"Change password", "profile":"Account Center" }[view]) || groups.flatMap(group => group.items).find(item => item.id === view)?.title || "Settings";
   const preferenceDefaults = SETTINGS_PREFERENCE_DEFAULTS;
   const safePrefs = normalizeSettingsPreferences(chatPrefs);
-  const pref = (key, value) => setChatPrefs(current => updateSettingsPreference(current, key, value));
+  const pref = async (key, value) => {
+    setChatPrefs(current => updateSettingsPreference(current, key, value));
+    if (key !== "readReceipts" || !session?.user?.id || !supabase) return;
+    setMessage("");
+    const { error } = await supabase.from("profiles")
+      .update({ read_receipts_enabled: Boolean(value) })
+      .eq("id", session.user.id);
+    if (error) {
+      setChatPrefs(current => updateSettingsPreference(current, key, !value));
+      setMessage(error.message || "Could not save read-receipt preference.");
+    }
+  };
   const back = () => { if (view !== "home") window.history.back(); };
 
   useEffect(() => {
@@ -87,7 +98,7 @@ export default function SettingsDestination({ onBack = () => {}, onSubpageChange
       setPrivacyMessage("");
       try {
         const [profileResult, requestResult] = await Promise.all([
-          supabase.from("profiles").select("is_private").eq("id", session.user.id).single(),
+          supabase.from("profiles").select("is_private,read_receipts_enabled").eq("id", session.user.id).single(),
           supabase.from("follow_requests").select("requester_id,created_at").eq("target_id", session.user.id).order("created_at", { ascending: false }).limit(50)
         ]);
         if (profileResult.error) throw profileResult.error;
@@ -100,6 +111,7 @@ export default function SettingsDestination({ onBack = () => {}, onSubpageChange
         if (!active) return;
         const people = new Map((peopleResult.data || []).map(person => [person.id, person]));
         setServerPrivateProfile(!!profileResult.data?.is_private);
+        setChatPrefs(current => updateSettingsPreference(current, "readReceipts", profileResult.data?.read_receipts_enabled !== false));
         setPrivacyDraft(!!profileResult.data?.is_private);
         setIncomingFollowRequests((requestResult.data || []).map(request => ({
           ...request,
@@ -195,11 +207,11 @@ export default function SettingsDestination({ onBack = () => {}, onSubpageChange
         <h2>MESSAGING PRIVACY</h2>
         <Toggle title="Read receipts" detail="Let people know when you have read their messages" checked={safePrefs.readReceipts} onChange={v => pref("readReceipts", v)}/>
         <Toggle title="Message requests" detail="Allow messages from people outside your connections" checked={safePrefs.messageRequests} onChange={v => pref("messageRequests", v)}/>
-        <p className="st-note">Messaging preferences are saved on this device.</p>
+        <p className="st-note">Read-receipt preference is saved to your account and enforced by the server. Message requests remain device-local.</p>
       </section>
     </>;
-    if (view === "notifications") return <><section className="st-card"><h2>MESSAGES</h2><Toggle title="Message alerts" detail="Show in-app alerts when new messages arrive" checked={safePrefs.messageAlerts} onChange={v => pref("messageAlerts", v)}/></section><section className="st-card"><h2>COMMUNITY ACTIVITY</h2><Toggle title="Activity alerts" detail="Get alerts about activity on your account" checked={safePrefs.activityAlerts} onChange={v => pref("activityAlerts", v)}/><Toggle title="Likes" detail="When someone likes your posts" checked={safePrefs.likesAlerts} onChange={v => pref("likesAlerts", v)}/><Toggle title="Comments" detail="When someone comments on your posts" checked={safePrefs.commentAlerts} onChange={v => pref("commentAlerts", v)}/><Toggle title="Mentions" detail="When someone mentions you" checked={safePrefs.mentionAlerts} onChange={v => pref("mentionAlerts", v)}/><p className="st-note">Preferences are saved on this device. They do not grant browser or operating-system notification permission.</p><button type="button" className="st-reset-button" onClick={() => setResetDialog("notifications")}>Reset notification preferences</button>{message && <p className="st-message" role="status" aria-live="polite">{message}</p>}</section></>;
-    if (view === "chats") return <><section className="st-card"><h2>COMPOSING MESSAGES</h2><Toggle title="Enter to send" detail="Press Enter to send; use Shift + Enter for a new line" checked={safePrefs.enterToSend} onChange={v => pref("enterToSend", v)}/></section><section className="st-card"><h2>MEDIA</h2><Toggle title="Media previews" detail="Show previews for shared media when available" checked={safePrefs.mediaPreview} onChange={v => pref("mediaPreview", v)}/><Toggle title="Auto-load media" detail="Load shared images and videos automatically on this device" checked={safePrefs.autoDownloadMedia} onChange={v => pref("autoDownloadMedia", v)}/><p className="st-note">Media preferences affect this device only. Your mobile data or Wi-Fi usage may vary.</p><button type="button" className="st-reset-button" onClick={() => setResetDialog("chats")}>Reset chat preferences</button>{message && <p className="st-message" role="status" aria-live="polite">{message}</p>}</section></>;
+    if (view === "notifications") return <><section className="st-card"><h2>MESSAGES</h2><Toggle title="Message alerts" detail="Show in-app alerts when new messages arrive" checked={safePrefs.messageAlerts} disabled={true} onChange={v => pref("messageAlerts", v)}/></section><section className="st-card"><h2>COMMUNITY ACTIVITY</h2><Toggle title="Activity alerts" detail="Get alerts about activity on your account" checked={safePrefs.activityAlerts} disabled={true} onChange={v => pref("activityAlerts", v)}/><Toggle title="Likes" detail="When someone likes your posts" checked={safePrefs.likesAlerts} disabled={true} onChange={v => pref("likesAlerts", v)}/><Toggle title="Comments" detail="When someone comments on your posts" checked={safePrefs.commentAlerts} disabled={true} onChange={v => pref("commentAlerts", v)}/><Toggle title="Mentions" detail="When someone mentions you" checked={safePrefs.mentionAlerts} disabled={true} onChange={v => pref("mentionAlerts", v)}/><p className="st-note">Preferences are saved on this device. They do not grant browser or operating-system notification permission.</p><button type="button" className="st-reset-button" onClick={() => setResetDialog("notifications")}>Reset notification preferences</button>{message && <p className="st-message" role="status" aria-live="polite">{message}</p>}</section></>;
+    if (view === "chats") return <><section className="st-card"><h2>COMPOSING MESSAGES</h2><Toggle title="Enter to send" detail="Press Enter to send; use Shift + Enter for a new line" checked={safePrefs.enterToSend} onChange={v => pref("enterToSend", v)}/></section><section className="st-card"><h2>MEDIA</h2><Toggle title="Media previews" detail="Show previews for shared media when available" checked={safePrefs.mediaPreview} disabled={true} onChange={v => pref("mediaPreview", v)}/><Toggle title="Auto-load media" detail="Load shared images and videos automatically on this device" checked={safePrefs.autoDownloadMedia} disabled={true} onChange={v => pref("autoDownloadMedia", v)}/><p className="st-note">Media preferences affect this device only. Your mobile data or Wi-Fi usage may vary.</p><button type="button" className="st-reset-button" onClick={() => setResetDialog("chats")}>Reset chat preferences</button>{message && <p className="st-message" role="status" aria-live="polite">{message}</p>}</section></>;
     if (view === "appearance") return <>
       <section className="st-card"><h2>THEME</h2><div className="st-theme-options">{[{id:"light",label:"Light",Icon:Sun},{id:"dark",label:"Dark",Icon:Moon},{id:"system",label:"System",Icon:Monitor}].map(({id,label,Icon}) => <button key={id} className={theme === id ? "selected" : ""} aria-pressed={theme === id} onClick={() => setTheme(id)}><Icon/><span>{label}</span>{theme === id && <Check/>}</button>)}</div></section>
       <section className="st-card"><h2>TEXT & PREVIEW</h2><div className="st-choice"><span><Type/>Text size</span><div>{["small","medium","large"].map(v => <button key={v} className={fontSize === v ? "selected" : ""} aria-pressed={fontSize === v} onClick={() => setFontSize(v)}>{v[0].toUpperCase()+v.slice(1)}</button>)}</div></div><div className="st-choice"><span>Font style</span><div>{[{id:"system",label:"System"},{id:"sans",label:"Sans"},{id:"serif",label:"Serif"}].map(v => <button key={v.id} className={fontFamily === v.id ? "selected" : ""} aria-pressed={fontFamily === v.id} onClick={() => setFontFamily(v.id)}>{v.label}</button>)}</div></div><div className={`st-appearance-preview font-${fontSize} family-${fontFamily}`} aria-live="polite"><strong>Chatly preview</strong><p>This is how text will appear across your app.</p><small>Changes are saved automatically on this device.</small></div><button type="button" className="st-reset-button" onClick={() => { setFontSize("medium"); setFontFamily("system"); setTheme("system"); }}>Restore default appearance</button></section>
