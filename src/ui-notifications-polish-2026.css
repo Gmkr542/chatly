@@ -1,0 +1,17 @@
+/* Batch 07 — notification center */
+.app-shell .notification-destination-page { min-width: 0; }
+.app-shell .notification-content { width: 100%; max-width: 720px; margin-inline: auto; }
+.app-shell .notification-feed { min-width: 0; }
+.app-shell .notification-controls-row { display: flex; flex-wrap: wrap; align-items: center; gap: 10px; }
+.app-shell .notification-filter-row { display: flex; gap: 8px; overflow-x: auto; scrollbar-width: none; }
+.app-shell .notification-filter-row::-webkit-scrollbar { display: none; }
+.app-shell .notification-heading-actions { display: flex; align-items: center; gap: 8px; }
+.app-shell .notification-mark-all-read, .app-shell .notification-refresh-button { min-height: 40px; }
+.app-shell .notification-activity-list { display: flex; flex-direction: column; }
+.app-shell .notification-date-heading { position: sticky; top: 0; z-index: 2; padding: 12px 16px 8px; background: var(--bg-primary); }
+.app-shell .notification-activity-copy { min-width: 0; overflow-wrap: anywhere; line-height: 1.5; }
+.app-shell .notification-actor-avatar { flex: 0 0 auto; border-radius: 50%; object-fit: cover; }
+.app-shell .notification-post-preview { max-width: 100%; overflow: hidden; border-radius: 12px; }
+.app-shell .notification-mark-read { min-width: 36px; min-height: 36px; border-radius: 50%; }
+.app-shell .notification-empty-state { margin: 20px; padding: 32px 20px; border: 1px dashed var(--border-subtle); border-radius: 18px; text-align: center; }
+.app-shell .notification-load-more { min-height: 44px; }
