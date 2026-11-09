@@ -78,4 +78,5 @@
 .global-profile-drawer > .global-profile-logout { margin-top: 5px; border-top: 1px solid var(--border, #e4e4e9); border-radius: 0 0 10px 10px; color: #d34b59; }
 .app-shell .app-main-column { grid-column: 1; }
 .app-shell .topbar { justify-content: flex-start; }
+.app-main-column > .topbar .brand { display: flex !important; }
 .app-shell .topbar .global-profile-menu { margin-left: 0; }
