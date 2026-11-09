@@ -27,18 +27,18 @@ BEGIN
     FROM pg_policies
     WHERE schemaname = 'public'
       AND (
-        (coalesce(qual, '') ~* 'auth\\.uid\\(\\)' AND coalesce(qual, '') !~* 'select[[:space:]]+auth\\.uid\\(\\)')
+        (coalesce(qual, '') ~* 'auth\.uid\(\)' AND coalesce(qual, '') !~* 'select[[:space:]]+auth\.uid\(\)')
         OR
-        (coalesce(with_check, '') ~* 'auth\\.uid\\(\\)' AND coalesce(with_check, '') !~* 'select[[:space:]]+auth\\.uid\\(\\)')
+        (coalesce(with_check, '') ~* 'auth\.uid\(\)' AND coalesce(with_check, '') !~* 'select[[:space:]]+auth\.uid\(\)')
       )
   LOOP
     new_qual := policy_row.qual;
     new_check := policy_row.with_check;
     IF new_qual IS NOT NULL THEN
-      new_qual := regexp_replace(new_qual, 'auth\\.uid\\(\\)', '(select auth.uid())', 'gi');
+      new_qual := regexp_replace(new_qual, 'auth\.uid\(\)', '(select auth.uid())', 'gi');
     END IF;
     IF new_check IS NOT NULL THEN
-      new_check := regexp_replace(new_check, 'auth\\.uid\\(\\)', '(select auth.uid())', 'gi');
+      new_check := regexp_replace(new_check, 'auth\.uid\(\)', '(select auth.uid())', 'gi');
     END IF;
     role_list := array_to_string(policy_row.roles, ', ');
     policy_mode := CASE WHEN policy_row.permissive = 'PERMISSIVE' THEN 'PERMISSIVE' ELSE 'RESTRICTIVE' END;
