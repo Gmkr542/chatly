@@ -1,109 +1,134 @@
--- Chatly 2.0 / Batch 1: read-only Supabase security audit.
--- Run this in the Supabase SQL Editor using a database owner account.
--- This script only reads PostgreSQL metadata; it does not alter schema, data, or policies.
+-- Chatly 2.0 / Batch 1: consolidated read-only Supabase security audit.
+-- Run in Supabase SQL Editor using a database owner account.
+-- IMPORTANT: this is one SELECT statement so the SQL Editor returns every
+-- audit section in a single result grid. It does not alter schema, data, or policies.
 
--- 1) Public tables: verify that Row Level Security is enabled and forced where appropriate.
-select
-  n.nspname as schema_name,
-  c.relname as table_name,
-  c.relrowsecurity as rls_enabled,
-  c.relforcerowsecurity as rls_forced,
-  case
-    when not c.relrowsecurity then 'CRITICAL: RLS is disabled'
-    when not c.relforcerowsecurity then 'REVIEW: RLS is enabled but not forced'
-    else 'RLS enabled and forced'
-  end as audit_status
-from pg_catalog.pg_class c
-join pg_catalog.pg_namespace n on n.oid = c.relnamespace
-where n.nspname = 'public'
-  and c.relkind in ('r', 'p')
-order by c.relname;
+with audit_rows(section, sort_order, details) as (
+  -- 1) Public tables: RLS enabled / forced.
+  select
+    '01_rls_tables',
+    c.relname,
+    jsonb_build_object(
+      'schema_name', n.nspname,
+      'table_name', c.relname,
+      'rls_enabled', c.relrowsecurity,
+      'rls_forced', c.relforcerowsecurity,
+      'audit_status', case
+        when not c.relrowsecurity then 'CRITICAL: RLS is disabled'
+        when not c.relforcerowsecurity then 'REVIEW: RLS enabled but not forced'
+        else 'RLS enabled and forced'
+      end
+    )
+  from pg_catalog.pg_class c
+  join pg_catalog.pg_namespace n on n.oid = c.relnamespace
+  where n.nspname = 'public' and c.relkind in ('r', 'p')
 
--- 2) Effective policy definitions for public tables.
--- Review permissive policies carefully: multiple permissive policies are OR-combined.
-select
-  schemaname,
-  tablename,
-  policyname,
-  permissive,
-  roles,
-  cmd,
-  qual as using_expression,
-  with_check as check_expression
-from pg_catalog.pg_policies
-where schemaname = 'public'
-order by tablename, cmd, policyname;
+  union all
 
--- 3) Table-level privileges granted to anon/authenticated.
--- RLS does not replace the need to review these grants.
-select
-  table_schema,
-  table_name,
-  grantee,
-  privilege_type,
-  is_grantable
-from information_schema.role_table_grants
-where table_schema = 'public'
-  and grantee in ('anon', 'authenticated')
-order by table_name, grantee, privilege_type;
+  -- 2) Effective public policies. Permissive policies are OR-combined.
+  select
+    '02_public_policies',
+    p.tablename || ':' || p.policyname,
+    jsonb_build_object(
+      'schema_name', p.schemaname,
+      'table_name', p.tablename,
+      'policy_name', p.policyname,
+      'permissive', p.permissive,
+      'roles', p.roles,
+      'command', p.cmd,
+      'using_expression', p.qual,
+      'check_expression', p.with_check
+    )
+  from pg_catalog.pg_policies p
+  where p.schemaname = 'public'
 
--- 4) Column-level privileges, especially important for profile and message fields.
-select
-  table_schema,
-  table_name,
-  column_name,
-  grantee,
-  privilege_type
-from information_schema.column_privileges
-where table_schema = 'public'
-  and grantee in ('anon', 'authenticated')
-order by table_name, column_name, grantee, privilege_type;
+  union all
 
--- 5) SECURITY DEFINER routines: inspect search_path and execution grants.
--- SECURITY DEFINER routines should use a safe, fixed search_path and narrow EXECUTE grants.
-select
-  p.oid::regprocedure as routine,
-  p.prosecdef as security_definer,
-  p.proconfig as routine_settings,
-  has_function_privilege('anon', p.oid, 'EXECUTE') as anon_can_execute,
-  has_function_privilege('authenticated', p.oid, 'EXECUTE') as authenticated_can_execute
-from pg_catalog.pg_proc p
-join pg_catalog.pg_namespace n on n.oid = p.pronamespace
-where n.nspname = 'public'
-order by p.oid::regprocedure::text;
+  -- 3) Table-level grants to API roles.
+  select
+    '03_table_grants',
+    g.table_name || ':' || g.grantee || ':' || g.privilege_type,
+    jsonb_build_object(
+      'table_schema', g.table_schema,
+      'table_name', g.table_name,
+      'grantee', g.grantee,
+      'privilege_type', g.privilege_type,
+      'is_grantable', g.is_grantable
+    )
+  from information_schema.role_table_grants g
+  where g.table_schema = 'public'
+    and g.grantee in ('anon', 'authenticated')
 
--- 6) Storage object policies: confirm avatar writes remain user-folder scoped.
-select
-  schemaname,
-  tablename,
-  policyname,
-  permissive,
-  roles,
-  cmd,
-  qual as using_expression,
-  with_check as check_expression
-from pg_catalog.pg_policies
-where schemaname = 'storage'
-  and tablename = 'objects'
-order by policyname;
+  union all
 
--- 7) Profile privacy readiness: the current client preference is local-only.
--- This query confirms whether a server-side privacy column exists yet.
-select
-  exists (
-    select 1
-    from information_schema.columns
-    where table_schema = 'public'
-      and table_name = 'profiles'
-      and column_name = 'is_private'
-  ) as server_side_is_private_column_exists;
+  -- 4) Column-level grants to API roles.
+  select
+    '04_column_grants',
+    g.table_name || ':' || g.column_name || ':' || g.grantee || ':' || g.privilege_type,
+    jsonb_build_object(
+      'table_schema', g.table_schema,
+      'table_name', g.table_name,
+      'column_name', g.column_name,
+      'grantee', g.grantee,
+      'privilege_type', g.privilege_type
+    )
+  from information_schema.column_privileges g
+  where g.table_schema = 'public'
+    and g.grantee in ('anon', 'authenticated')
 
--- Manual review checklist after running:
--- [ ] No public table containing user data has RLS disabled.
--- [ ] Profile and post visibility policies match the intended product privacy model.
--- [ ] Follow relationships cannot bypass private-account approval.
--- [ ] Message policies restrict reads and writes to conversation participants.
--- [ ] Group membership writes are routed through role-checked RPCs.
--- [ ] SECURITY DEFINER routines use a fixed safe search_path and narrow EXECUTE grants.
--- [ ] Avatar uploads are restricted to the authenticated user's own folder.
--- [ ] Compare these live results with the checked-in migrations; do not assume they match.
+  union all
+
+  -- 5) SECURITY DEFINER routines and execute grants.
+  select
+    '05_routines',
+    p.oid::regprocedure::text,
+    jsonb_build_object(
+      'routine', p.oid::regprocedure::text,
+      'security_definer', p.prosecdef,
+      'routine_settings', p.proconfig,
+      'anon_can_execute', has_function_privilege('anon', p.oid, 'EXECUTE'),
+      'authenticated_can_execute', has_function_privilege('authenticated', p.oid, 'EXECUTE')
+    )
+  from pg_catalog.pg_proc p
+  join pg_catalog.pg_namespace n on n.oid = p.pronamespace
+  where n.nspname = 'public'
+
+  union all
+
+  -- 6) Storage object policies.
+  select
+    '06_storage_policies',
+    p.policyname,
+    jsonb_build_object(
+      'schema_name', p.schemaname,
+      'table_name', p.tablename,
+      'policy_name', p.policyname,
+      'permissive', p.permissive,
+      'roles', p.roles,
+      'command', p.cmd,
+      'using_expression', p.qual,
+      'check_expression', p.with_check
+    )
+  from pg_catalog.pg_policies p
+  where p.schemaname = 'storage' and p.tablename = 'objects'
+
+  union all
+
+  -- 7) Server-side profile privacy column. Keep the existing output key.
+  select
+    '07_profile_privacy_column',
+    'profiles.is_private',
+    jsonb_build_object(
+      'server_side_is_private_column_exists',
+      exists (
+        select 1
+        from information_schema.columns
+        where table_schema = 'public'
+          and table_name = 'profiles'
+          and column_name = 'is_private'
+      )
+    )
+)
+select section, details
+from audit_rows
+order by section, sort_order;
