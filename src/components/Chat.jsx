@@ -25,7 +25,7 @@ function formatMessageDateTime(value) {
   });
 }
 
-export default function Chat({ session, profile, targetId, enterToSend = true, onBackToFeed, onOpenProfile }) {
+export default function Chat({ session, profile, targetId, enterToSend = true, readReceipts = true, onBackToFeed, onOpenProfile }) {
   const [people, setPeople] = useState([]);
   const [groupConversations, setGroupConversations] = useState([]);
   const [showGroupCreate, setShowGroupCreate] = useState(false);
@@ -164,7 +164,7 @@ export default function Chat({ session, profile, targetId, enterToSend = true, o
   }, [active, messages, session.user.id, readMarkers]);
 
   useEffect(() => {
-    if (!active) return;
+    if (!active || readReceipts === false) return;
     const unreadIncoming = messages.filter(message =>
       message.sender_id === active.id && message.recipient_id === session.user.id && !message.read_at
     );
@@ -183,7 +183,7 @@ export default function Chat({ session, profile, targetId, enterToSend = true, o
         const failed = results.find(({ error: err }) => err);
         if (failed?.error) setError(failed.error.message || "Could not update read receipts.");
       });
-  }, [active, messages, session.user.id]);
+  }, [active, messages, session.user.id, readReceipts]);
 
   useEffect(() => {
     supabase.from("profiles").select("id, username, display_name, avatar_url")
