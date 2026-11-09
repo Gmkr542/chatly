@@ -1,0 +1,18 @@
+/* Batch 06 — search and discovery */
+.app-shell .dedicated-search-page { min-width: 0; }
+.app-shell .search-page { width: 100%; max-width: 760px; margin-inline: auto; }
+.app-shell .dedicated-search-tabs { position: sticky; top: 0; z-index: 4; background: var(--bg-surface); }
+.app-shell .dedicated-search-tabs button { min-height: 44px; }
+.app-shell .explore-home { min-width: 0; padding: 16px; }
+.app-shell .explore-welcome { display: flex; align-items: center; justify-content: space-between; gap: 16px; border-radius: 22px; }
+.app-shell .explore-welcome-copy { min-width: 0; }
+.app-shell .explore-welcome-copy h2 { letter-spacing: -.045em; line-height: 1.12; }
+.app-shell .explore-open-search { width: 100%; min-height: 48px; border-radius: 14px; }
+.app-shell .explore-category-grid { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 12px; }
+.app-shell .explore-category-card { min-width: 0; min-height: 112px; border-radius: 16px; text-align: left; }
+.app-shell .explore-category-card:focus-visible, .app-shell .explore-open-search:focus-visible { outline: 2px solid var(--brand-accent); outline-offset: 3px; }
+.app-shell .explore-category-copy small { line-height: 1.4; }
+.app-shell .explore-video-search { min-height: 44px; }
+.app-shell .explore-home-post { min-width: 0; border-bottom: 1px solid var(--border-subtle); }
+.app-shell .explore-home-post-author { min-width: 0; }
+@media (min-width: 640px) { .app-shell .explore-category-grid { grid-template-columns: repeat(3, minmax(0, 1fr)); } }
