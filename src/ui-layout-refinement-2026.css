@@ -1,0 +1,73 @@
+/* Chatly UI refinement — keep the home header and discovery controls visually connected. */
+.app-shell .app-main-column > .topbar + .feed-page {
+  padding-top: 0;
+}
+
+.app-shell .app-main-column > .topbar {
+  border-bottom: 0;
+  box-shadow: none;
+}
+
+.app-shell .feed-page .feed-header-section {
+  gap: 14px;
+  margin: 0 0 18px;
+  padding: 12px clamp(14px, 2.4vw, 22px) 12px;
+  background: var(--surface, #fff);
+  border-bottom: 1px solid var(--border, var(--chatly-border));
+}
+
+/* The page edge padding remains for the post list; only the header stack bleeds
+   to the app edge so it joins the global header without a visible gutter. */
+.app-shell .feed-page .feed-header-section {
+  margin-inline: -16px;
+}
+
+.app-shell .feed-page .feed-discovery-row {
+  margin: 0;
+  min-width: 0;
+}
+
+.app-shell .feed-page .feed-discovery-search {
+  min-height: 48px;
+  border-radius: 14px;
+}
+
+.app-shell .feed-page .feed-filter-tabs {
+  padding-inline: 0;
+  gap: 6px;
+}
+
+.app-shell .global-profile-drawer > button {
+  min-height: 48px;
+  gap: 12px;
+}
+
+@media (max-width: 760px) {
+  .app-shell .app-main-column > .topbar + .feed-page {
+    padding-top: 0;
+  }
+
+  .app-shell .feed-page .feed-header-section {
+    gap: 12px;
+    margin: 0 0 14px;
+    padding: 10px 14px 10px;
+    margin-inline: -10px;
+  }
+
+  .app-shell .feed-page .feed-discovery-search {
+    min-height: 44px;
+    padding: 9px 12px;
+    font-size: 14px;
+  }
+
+  .app-shell .feed-page .feed-filter-tabs {
+    gap: 6px;
+    scroll-padding-inline: 0;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .app-shell .feed-page .feed-discovery-search {
+    transition: none;
+  }
+}

@@ -30,6 +30,7 @@ import "./ui-settings-polish-2026.css";
 import "./ui-interactions-polish-2026.css";
 import "./ui-responsive-polish-2026.css";
 import "./feed-scroll-fix.css";
+import "./ui-layout-refinement-2026.css";
 
 createRoot(document.getElementById("root")).render(
   <React.StrictMode>
