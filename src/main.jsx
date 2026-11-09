@@ -29,6 +29,7 @@ import "./ui-notifications-polish-2026.css";
 import "./ui-settings-polish-2026.css";
 import "./ui-interactions-polish-2026.css";
 import "./ui-responsive-polish-2026.css";
+import "./feed-scroll-fix.css";
 
 createRoot(document.getElementById("root")).render(
   <React.StrictMode>
