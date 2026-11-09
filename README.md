@@ -141,3 +141,11 @@ Before promoting a release, verify:
 - [ ] No private credentials are exposed in frontend assets or repository files.
 
 A green build confirms compilation and repository regression checks. It does not prove production credentials, database schema, RLS, storage, realtime configuration, or end-to-end behavior are correct.
+
+## Group AI insights (optional)
+
+Group AI is manual and opt-in. It remains disabled until every current member explicitly consents; missing consent records mean opt-out. Adding a member pauses analysis until that member opts in. Members can revoke consent. Chatly does not continuously scan group conversations or persist generated summaries.
+
+Deploy `supabase/functions/group-ai-insights` after applying the additive group AI migrations. Configure the Edge Function secrets `GROUP_AI_API_URL`, `GROUP_AI_API_KEY`, and `GROUP_AI_MODEL` for an OpenAI-compatible chat-completions endpoint. Keep provider credentials in Supabase secrets only. Keep JWT verification enabled. The authenticated `get_group_ai_context` RPC verifies membership and unanimous consent in one database statement and returns at most 80 recent messages.
+
+Test with separate accounts: missing consent, newly added members, revoked consent, non-member requests, and unanimous opt-in. Provider usage may incur charges; a free tier is subject to provider limits and unlimited free processing is not guaranteed. Results are transient and not stored by Chatly.
