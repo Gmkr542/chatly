@@ -12,6 +12,8 @@ The production migration ledger was inspected and contains these three entries:
 
 Those three filenames now match the exact remote version/name pairs. The earlier duplicate local prefixes were removed by aligning these three files to their verified remote ledger versions.
 
+Five older duplicate prefixes remain in the historical migration directory: `202610250001`, `202610260001`, `202610260002`, `202610260003`, and `202610260004`. Their files are not represented by the inspected production ledger, and the live schema has not been fully reconciled against each file. They were deliberately **not** renamed: inventing new versions could make `supabase db push` replay historical schema changes. The recent `202611090001` and `202611090002` collisions are resolved by the exact remote-version mappings above.
+
 **Important:** the rest of the repository's historical migrations are not represented by those three remote ledger entries. Their live application status has not been established merely by inspecting the ledger. They remain unresolved/pending for reconciliation (unmatched historical migrations remain pending); do not run `supabase db push`, `migration repair`, or a bulk migration replay until every remaining file has been compared with the actual production schema and a verified backup/staging restore is available.
 
 ## Staged reconciliation patch

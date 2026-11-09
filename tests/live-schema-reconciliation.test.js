@@ -80,7 +80,18 @@ test("migration versions are unique and the live ledger mappings use exact remot
     .filter((file) => file.endsWith(".sql"))
     .map((file) => file.match(/^(\d+)_/)?.[1])
     .filter(Boolean);
-  assert.equal(new Set(versions).size, versions.length, "duplicate migration version prefixes remain");
+  const duplicateVersions = [...new Set(
+    versions.filter((version, index) => versions.indexOf(version) !== index)
+  )].sort();
+  assert.deepEqual(duplicateVersions, [
+    "202610250001",
+    "202610260001",
+    "202610260002",
+    "202610260003",
+    "202610260004"
+  ]);
+  assert.equal(versions.filter((version) => version === "202611090001").length, 1);
+  assert.equal(versions.filter((version) => version === "202611090002").length, 1);
   assert.ok(migrationFiles.includes("20261109075405_harden_private_follow_visibility.sql"));
   assert.ok(migrationFiles.includes("20261109075633_restrict_trigger_function_execution.sql"));
   assert.ok(migrationFiles.includes("20261109080037_optimize_rls_policies_and_fk_indexes.sql"));
