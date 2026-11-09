@@ -20,6 +20,15 @@ import "./design-tokens.css";
 import "./app-shell-2026.css";
 import "./feed-chat-2026.css";
 import "./destinations-2026.css";
+import "./ui-shell-polish-2026.css";
+import "./ui-feed-polish-2026.css";
+import "./ui-chat-polish-2026.css";
+import "./ui-profile-polish-2026.css";
+import "./ui-discovery-polish-2026.css";
+import "./ui-notifications-polish-2026.css";
+import "./ui-settings-polish-2026.css";
+import "./ui-interactions-polish-2026.css";
+import "./ui-responsive-polish-2026.css";
 
 createRoot(document.getElementById("root")).render(
   <React.StrictMode>
